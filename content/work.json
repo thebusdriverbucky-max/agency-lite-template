@@ -1,0 +1,16 @@
+[
+  {
+    "id": "project-1",
+    "title": "E-commerce Redesign",
+    "category": "Web Design",
+    "description": "A complete overhaul of a modern e-commerce platform.",
+    "image": "/images/project1.jpg"
+  },
+  {
+    "id": "project-2",
+    "title": "Brand Identity",
+    "category": "Branding",
+    "description": "New brand identity for a tech startup.",
+    "image": "/images/project2.jpg"
+  }
+]

@@ -1,0 +1,41 @@
+{
+  "site": {
+    "name": "Agency Lite",
+    "description": "A lightweight template for creative agencies.",
+    "colors": {
+      "primary": "#000000",
+      "secondary": "#ffffff"
+    }
+  },
+  "hero": {
+    "title": "We build digital experiences",
+    "subtitle": "Creative solutions for modern brands.",
+    "ctaText": "Get in touch"
+  },
+  "about": {
+    "title": "About Us",
+    "text": "We are a team of passionate designers and developers building modern digital products. Our focus is on clean aesthetics and exceptional performance."
+  },
+  "services": [
+    {
+      "title": "Web Development",
+      "description": "Modern and fast websites.",
+      "icon": "Code"
+    },
+    {
+      "title": "Design",
+      "description": "Beautiful user interfaces.",
+      "icon": "Palette"
+    },
+    {
+      "title": "Strategy",
+      "description": "Digital product strategy.",
+      "icon": "Lightbulb"
+    }
+  ],
+  "contact": {
+    "title": "Let's work together",
+    "email": "hello@agencylite.com",
+    "buttonText": "Send an email"
+  }
+}
