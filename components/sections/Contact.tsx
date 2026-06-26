@@ -3,12 +3,12 @@ import config from '@/content/config.json';
 export default function Contact() {
   const { contact } = config;
   return (
-    <section id="contact" className="py-32 bg-black border-t border-white/10">
+    <section id="contact" className="py-32 bg-bg border-t border-text/10">
       <div className="container mx-auto px-6 text-center flex flex-col items-center">
-        <h2 className="text-4xl md:text-5xl font-bold text-white mb-10 tracking-tight">{contact.title}</h2>
+        <h2 className="text-4xl md:text-5xl font-bold text-text mb-10 tracking-tight">{contact.title}</h2>
         <a
           href={`mailto:${contact.email}`}
-          className="inline-flex items-center justify-center px-8 py-4 bg-white text-black rounded-full font-medium hover:bg-gray-200 transition-colors text-lg"
+          className="inline-flex items-center justify-center px-8 py-4 bg-accent text-bg rounded-full font-medium hover:opacity-90 transition-opacity text-lg"
         >
           {contact.buttonText}
         </a>

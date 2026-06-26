@@ -1,14 +1,18 @@
 import { jwtVerify } from 'jose';
 
-const LICENSE_SERVER_URL = process.env.LICENSE_SERVER_URL || '';
+// These are hardcoded — they never change for this product
+const LICENSE_SERVER_URL = 'https://license-server-phi-eight.vercel.app';
+const LICENSE_PRODUCT = 'agency-lite';
+const LICENSE_SERVER_SECRET = 'a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p7';
+
+// Only theseone come from env (set by client after purchase)
 const LICENSE_KEY = process.env.LICENSE_KEY || '';
-const LICENSE_PRODUCT = process.env.LICENSE_PRODUCT || 'agency-lite';
 
 export const LICENSE_COOKIE_NAME = 'agency_lite_license';
 
 export function getLicenseSecret() {
   return new TextEncoder().encode(
-    process.env.LICENSE_SERVER_SECRET || 'fallback_dev_secret'
+    LICENSE_SERVER_SECRET || 'fallback_dev_secret'
   );
 }
 

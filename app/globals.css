@@ -1,1 +1,31 @@
 @import "tailwindcss";
+
+@theme {
+  --color-bg: var(--bg);
+  --color-accent: var(--accent);
+  --color-text: var(--text);
+}
+
+[data-theme="dark-teal"] {
+  --bg: #0f172a;
+  --accent: #14b8a6;
+  --text: #f1f5f9;
+}
+
+[data-theme="dark-amber"] {
+  --bg: #0f172a;
+  --accent: #f59e0b;
+  --text: #f1f5f9;
+}
+
+[data-theme="light-slate"] {
+  --bg: #f8fafc;
+  --accent: #475569;
+  --text: #0f172a;
+}
+
+[data-theme="light-rose"] {
+  --bg: #fafafa;
+  --accent: #e11d48;
+  --text: #0f172a;
+}

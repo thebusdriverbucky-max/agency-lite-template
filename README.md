@@ -1,22 +1,64 @@
-# Agency Lite Template
+---
 
-A lightweight and fast template for portfolios and agency websites.
+# Agency Lite — Own Your Website
 
-## How to Edit Content
+**Your website. Your code. No subscriptions. No lock-in.**
 
-All website content is managed through JSON files in the `content/` folder. You do not need to touch the code to change text or projects!
+Agency Lite is a clean, fast portfolio/agency template you buy once and own forever.
+No monthly fees, no SaaS platform, no data held hostage.
+You get the full source code, deploy it to Vercel in minutes, and it's yours.
 
-1. **Main Website Data**: Edit the `content/config.json` file. Here you can change the title, description, social media links, and contact information.
-2. **Projects/Portfolio**: Edit the `content/work.json` file. Add, remove, or modify information about your projects.
+## What's included
 
-## Deployment
+- Portfolio with project grid (edit via JSON — no code needed)
+- Services section, About, Hero, Contact
+- 4 built-in color themes (switch in `content/config.json`)
+- License protection — your copy, nobody else's
+- Deploy to Vercel in under 5 minutes
 
-The project is configured for seamless deployment on **Vercel**.
+## Setup after purchase
 
-1. Sign up or log in to [Vercel](https://vercel.com/).
-2. Import your repository containing this template.
-3. In the Vercel project settings, go to the **Environment Variables** section.
-4. Add a variable named `LICENSE_KEY` and set your license key as its value.
-5. Click **Deploy**!
+After purchasing at [ownyourwebsite.app](https://ownyourwebsite.app), you'll receive
+two keys on the success page. Keep this tab open.
 
-Your website will automatically rebuild whenever you push updates to the `content/` folder.
+1. Click the **Deploy to Vercel** button on the success page
+2. Connect your GitHub account when prompted
+3. Enter your two keys (LICENSE_KEY and LICENSE_SERVER_SECRET) — copy from success page
+4. Click Deploy — your site will be live in ~2 minutes
+
+That's it. No database setup, no complicated config.
+
+## Customizing your site
+
+**All content is in the `content/` folder — no code required.**
+
+Edit `content/config.json`:
+```json
+{
+  "site": { "name": "Your Name", "tagline": "What you do" },
+  "theme": "dark-teal",   // Options: dark-teal | dark-amber | light-slate | light-rose
+  "contact": { "email": "you@example.com" },
+  "social": { "github": "...", "linkedin": "...", "twitter": "..." }
+}
+```
+
+Edit `content/work.json` to update your portfolio projects.
+
+Push changes to GitHub → Vercel auto-rebuilds. No redeploy button needed.
+
+## Environment variables
+
+| Variable | Where to get it |
+|---|---|
+| `LICENSE_KEY` | Success page after purchase on ownyourwebsite.app |
+| `LICENSE_SERVER_SECRET` | Success page after purchase on ownyourwebsite.app |
+
+## Built with
+
+Next.js 15 · TypeScript · Tailwind CSS · No database
+
+---
+
+Purchased at [ownyourwebsite.app](https://ownyourwebsite.app)
+
+---
