@@ -21,15 +21,22 @@ export default function Hero() {
         </>
       )}
       <div className="relative container mx-auto px-6 max-w-4xl flex flex-col items-center">
-        <h1 className="text-5xl md:text-7xl font-extrabold tracking-tighter text-text mb-6 leading-tight">
+        <h1
+          className="text-5xl md:text-7xl font-extrabold tracking-tighter text-text mb-6 leading-tight opacity-0 animate-fade-in-up"
+          style={{ animationDelay: '100ms', animationFillMode: 'forwards' }}
+        >
           {hero.title}
         </h1>
-        <p className="text-xl md:text-2xl text-text/70 mb-10 max-w-2xl">
+        <p
+          className="text-xl md:text-2xl text-text/70 mb-10 max-w-2xl opacity-0 animate-fade-in-up"
+          style={{ animationDelay: '300ms', animationFillMode: 'forwards' }}
+        >
           {hero.subtitle}
         </p>
         <Link
           href="#contact"
-          className="bg-accent text-bg px-8 py-4 rounded-full font-medium hover:opacity-90 transition-opacity"
+          className="bg-accent text-bg px-8 py-4 rounded-full font-medium hover:opacity-90 transition-opacity opacity-0 animate-fade-in-up"
+          style={{ animationDelay: '500ms', animationFillMode: 'forwards' }}
         >
           {hero.ctaText}
         </Link>
