@@ -4,13 +4,13 @@
     "title": "E-commerce Redesign",
     "category": "Web Design",
     "description": "A complete overhaul of a modern e-commerce platform.",
-    "image": "/images/project1.jpg"
+    "image": "/images/project1.svg"
   },
   {
     "id": "project-2",
     "title": "Brand Identity",
     "category": "Branding",
     "description": "New brand identity for a tech startup.",
-    "image": "/images/project2.jpg"
+    "image": "/images/project2.svg"
   }
 ]

@@ -566,6 +566,88 @@ export default function ContentEditor({
           </div>
         </div>
       </Card>
+
+      {/* ----------------------------------------------------------------- */}
+      {/* Legal Pages */}
+      {/* ----------------------------------------------------------------- */}
+      <Card>
+        <CardHeader
+          title="Legal Pages"
+          description="Edit titles and text for legal pages (Privacy Policy and Terms of Service)."
+        />
+        <div className="space-y-6 px-6 py-6 border-b border-text/10">
+          <h3 className="text-lg font-medium text-text">Privacy Policy</h3>
+          <div className="grid grid-cols-1 gap-5">
+            <Field label="Privacy Policy Title" htmlFor="privacy-title">
+              <TextInput
+                id="privacy-title"
+                value={config.privacyPolicy?.title ?? 'Privacy Policy'}
+                onChange={(e) =>
+                  onConfigChange((prev) => ({
+                    ...prev,
+                    privacyPolicy: {
+                      title: e.target.value,
+                      text: prev.privacyPolicy?.text ?? '',
+                    },
+                  }))
+                }
+              />
+            </Field>
+            <Field label="Privacy Policy Content" htmlFor="privacy-text" hint="Use newlines to break paragraphs.">
+              <TextArea
+                id="privacy-text"
+                rows={6}
+                value={config.privacyPolicy?.text ?? ''}
+                onChange={(e) =>
+                  onConfigChange((prev) => ({
+                    ...prev,
+                    privacyPolicy: {
+                      title: prev.privacyPolicy?.title ?? 'Privacy Policy',
+                      text: e.target.value,
+                    },
+                  }))
+                }
+              />
+            </Field>
+          </div>
+        </div>
+        <div className="space-y-6 px-6 py-6">
+          <h3 className="text-lg font-medium text-text">Terms of Service</h3>
+          <div className="grid grid-cols-1 gap-5">
+            <Field label="Terms of Service Title" htmlFor="terms-title">
+              <TextInput
+                id="terms-title"
+                value={config.termsOfService?.title ?? 'Terms of Service'}
+                onChange={(e) =>
+                  onConfigChange((prev) => ({
+                    ...prev,
+                    termsOfService: {
+                      title: e.target.value,
+                      text: prev.termsOfService?.text ?? '',
+                    },
+                  }))
+                }
+              />
+            </Field>
+            <Field label="Terms of Service Content" htmlFor="terms-text" hint="Use newlines to break paragraphs.">
+              <TextArea
+                id="terms-text"
+                rows={6}
+                value={config.termsOfService?.text ?? ''}
+                onChange={(e) =>
+                  onConfigChange((prev) => ({
+                    ...prev,
+                    termsOfService: {
+                      title: prev.termsOfService?.title ?? 'Terms of Service',
+                      text: e.target.value,
+                    },
+                  }))
+                }
+              />
+            </Field>
+          </div>
+        </div>
+      </Card>
     </div>
   );
 }

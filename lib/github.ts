@@ -59,6 +59,11 @@ export interface ContactConfig {
   buttonText: string;
 }
 
+export interface LegalConfig {
+  title: string;
+  text: string;
+}
+
 export interface Config {
   theme: ThemeName;
   site: SiteConfig;
@@ -66,6 +71,8 @@ export interface Config {
   about: AboutConfig;
   services: ServiceItem[];
   contact: ContactConfig;
+  privacyPolicy?: LegalConfig;
+  termsOfService?: LegalConfig;
 }
 
 export interface Project {
