@@ -16,17 +16,22 @@ You get the full source code, deploy it to Vercel in minutes, and it's yours.
 - License protection — your copy, nobody else's
 - Deploy to Vercel in under 5 minutes
 
-## Setup after purchase
+## Getting Started
 
-After purchasing at [ownyourwebsite.app](https://ownyourwebsite.app), you'll receive
-two keys on the success page. Keep this tab open.
+To set up, run, and deploy this project, please refer to our official guides:
 
-1. Click the **Deploy to Vercel** button on the success page
-2. Connect your GitHub account when prompted
-3. Enter your two keys (LICENSE_KEY and LICENSE_SERVER_SECRET) — copy from success page
-4. Click Deploy — your site will be live in ~2 minutes
+1. **First-Step Guide (Start Here):**  
+   [https://www.ownyourwebsite.app/help](https://www.ownyourwebsite.app/help) — Read this first to quickly understand how the template works and get it running.
 
-That's it. No database setup, no complicated config.
+2. **Deployment Guide:**  
+   [https://www.ownyourwebsite.app/docs/deploy](https://www.ownyourwebsite.app/docs/deploy) — Step-by-step instructions on deploying your website to production.
+
+3. **Environment Variables Config:**  
+   [https://www.ownyourwebsite.app/docs/env](https://www.ownyourwebsite.app/docs/env) — Information on which environment variables are required and how to obtain them.
+
+## License Configuration
+
+All configuration values (including `LICENSE_KEY`, `LICENSE_PRODUCT`, or any other license-related keys) will be sent directly to your email address immediately after purchase. Simply paste them into your environment variables when configuring the project!
 
 ## Customizing your site
 
@@ -45,13 +50,6 @@ Edit `content/config.json`:
 Edit `content/work.json` to update your portfolio projects.
 
 Push changes to GitHub → Vercel auto-rebuilds. No redeploy button needed.
-
-## Environment variables
-
-| Variable | Where to get it |
-|---|---|
-| `LICENSE_KEY` | Success page after purchase on ownyourwebsite.app |
-| `LICENSE_SERVER_SECRET` | Success page after purchase on ownyourwebsite.app |
 
 ## Built with
 
