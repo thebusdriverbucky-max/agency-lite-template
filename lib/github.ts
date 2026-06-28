@@ -15,6 +15,18 @@ export type ThemeName = 'dark-teal' | 'dark-amber' | 'light-slate' | 'light-rose
 export interface SiteConfig {
   name: string;
   description: string;
+  /** Canonical site URL, e.g. https://example.com (used for SEO metadataBase). */
+  url: string;
+  /** Logo image URL. Leave empty to fall back to the site name as text. */
+  logo: string;
+  /** Open Graph image URL (recommended 1200×630). */
+  ogImage: string;
+  /** SEO keywords for search engines. */
+  keywords: string[];
+  /** Open Graph locale, e.g. en_US. */
+  locale: string;
+  /** Twitter @handle for Twitter card metadata. */
+  twitter: string;
   colors: {
     primary: string;
     secondary: string;
@@ -25,6 +37,8 @@ export interface HeroConfig {
   title: string;
   subtitle: string;
   ctaText: string;
+  /** Background image URL for the hero section. Leave empty for a plain background. */
+  backgroundImage: string;
 }
 
 export interface AboutConfig {
@@ -40,6 +54,7 @@ export interface ServiceItem {
 
 export interface ContactConfig {
   title: string;
+  subtitle: string;
   email: string;
   buttonText: string;
 }

@@ -32,6 +32,9 @@ const THEME_SWATCHES: Record<string, { bg: string; accent: string }> = {
   'light-rose': { bg: '#fafafa', accent: '#e11d48' },
 };
 
+const IMAGE_HINT =
+  'Paste a direct image URL (https://…). Local paths like /images/photo.jpg also work if you commit the file to /public.';
+
 export default function ContentEditor({
   config,
   work,
@@ -60,11 +63,10 @@ export default function ContentEditor({
                   onClick={() =>
                     onConfigChange((prev) => ({ ...prev, theme: opt.value }))
                   }
-                  className={`group flex flex-col items-center gap-2 rounded-xl border p-3 transition-colors ${
-                    active
-                      ? 'border-accent ring-1 ring-accent'
-                      : 'border-text/10 hover:border-text/25'
-                  }`}
+                  className={`group flex flex-col items-center gap-2 rounded-xl border p-3 transition-colors ${active
+                    ? 'border-accent ring-1 ring-accent'
+                    : 'border-text/10 hover:border-text/25'
+                    }`}
                 >
                   <span
                     className="flex h-12 w-full items-center justify-center rounded-lg"
@@ -87,23 +89,44 @@ export default function ContentEditor({
       {/* Site */}
       {/* ----------------------------------------------------------------- */}
       <Card>
-        <CardHeader title="Site" description="Global metadata used across the site." />
-        <div className="grid grid-cols-1 gap-5 px-6 py-6 sm:grid-cols-2">
-          <Field label="Site name" htmlFor="site-name">
-            <TextInput
-              id="site-name"
-              value={config.site.name}
-              onChange={(e) =>
-                onConfigChange((prev) => ({
-                  ...prev,
-                  site: { ...prev.site, name: e.target.value },
-                }))
-              }
-            />
-          </Field>
-          <Field label="Description" htmlFor="site-desc">
-            <TextInput
+        <CardHeader
+          title="Site"
+          description="Global metadata used across the site — branding, SEO and social sharing."
+        />
+        <div className="space-y-5 px-6 py-6">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+            <Field label="Site name" htmlFor="site-name">
+              <TextInput
+                id="site-name"
+                value={config.site.name}
+                onChange={(e) =>
+                  onConfigChange((prev) => ({
+                    ...prev,
+                    site: { ...prev.site, name: e.target.value },
+                  }))
+                }
+              />
+            </Field>
+            <Field label="Site URL" htmlFor="site-url" hint="Canonical URL, e.g. https://example.com">
+              <TextInput
+                id="site-url"
+                type="url"
+                placeholder="https://example.com"
+                value={config.site.url}
+                onChange={(e) =>
+                  onConfigChange((prev) => ({
+                    ...prev,
+                    site: { ...prev.site, url: e.target.value },
+                  }))
+                }
+              />
+            </Field>
+          </div>
+
+          <Field label="Description" htmlFor="site-desc" hint="Used for search engines and social previews.">
+            <TextArea
               id="site-desc"
+              rows={2}
               value={config.site.description}
               onChange={(e) =>
                 onConfigChange((prev) => ({
@@ -113,36 +136,122 @@ export default function ContentEditor({
               }
             />
           </Field>
-          <Field label="Primary color" htmlFor="site-primary">
+
+          <Field label="Logo" htmlFor="site-logo" hint={`Image URL for the header logo. ${IMAGE_HINT} Leave empty to show the site name as text.`}>
+            <div className="relative">
+              <ImageIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text/40" />
+              <TextInput
+                id="site-logo"
+                className="pl-9"
+                placeholder="https://…"
+                value={config.site.logo}
+                onChange={(e) =>
+                  onConfigChange((prev) => ({
+                    ...prev,
+                    site: { ...prev.site, logo: e.target.value },
+                  }))
+                }
+              />
+            </div>
+          </Field>
+
+          <Field label="OG image" htmlFor="site-og" hint={`Social share image (recommended 1200×630). ${IMAGE_HINT}`}>
+            <div className="relative">
+              <ImageIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text/40" />
+              <TextInput
+                id="site-og"
+                className="pl-9"
+                placeholder="https://…"
+                value={config.site.ogImage}
+                onChange={(e) =>
+                  onConfigChange((prev) => ({
+                    ...prev,
+                    site: { ...prev.site, ogImage: e.target.value },
+                  }))
+                }
+              />
+            </div>
+          </Field>
+
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+            <Field label="SEO keywords" htmlFor="site-keywords" hint="Comma-separated words for search engines.">
+              <TextInput
+                id="site-keywords"
+                value={(config.site.keywords ?? []).join(', ')}
+                onChange={(e) =>
+                  onConfigChange((prev) => ({
+                    ...prev,
+                    site: {
+                      ...prev.site,
+                      keywords: e.target.value
+                        .split(',')
+                        .map((k) => k.trim())
+                        .filter(Boolean),
+                    },
+                  }))
+                }
+              />
+            </Field>
+            <Field label="Twitter @handle" htmlFor="site-twitter" hint="Used for Twitter card metadata.">
+              <TextInput
+                id="site-twitter"
+                placeholder="@yourhandle"
+                value={config.site.twitter}
+                onChange={(e) =>
+                  onConfigChange((prev) => ({
+                    ...prev,
+                    site: { ...prev.site, twitter: e.target.value },
+                  }))
+                }
+              />
+            </Field>
+          </div>
+
+          <Field label="Locale" htmlFor="site-locale" hint="Open Graph locale, e.g. en_US or ru_RU.">
             <TextInput
-              id="site-primary"
-              value={config.site.colors.primary}
+              id="site-locale"
+              value={config.site.locale}
               onChange={(e) =>
                 onConfigChange((prev) => ({
                   ...prev,
-                  site: {
-                    ...prev.site,
-                    colors: { ...prev.site.colors, primary: e.target.value },
-                  },
+                  site: { ...prev.site, locale: e.target.value },
                 }))
               }
             />
           </Field>
-          <Field label="Secondary color" htmlFor="site-secondary">
-            <TextInput
-              id="site-secondary"
-              value={config.site.colors.secondary}
-              onChange={(e) =>
-                onConfigChange((prev) => ({
-                  ...prev,
-                  site: {
-                    ...prev.site,
-                    colors: { ...prev.site.colors, secondary: e.target.value },
-                  },
-                }))
-              }
-            />
-          </Field>
+
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+            <Field label="Primary color" htmlFor="site-primary">
+              <TextInput
+                id="site-primary"
+                value={config.site.colors.primary}
+                onChange={(e) =>
+                  onConfigChange((prev) => ({
+                    ...prev,
+                    site: {
+                      ...prev.site,
+                      colors: { ...prev.site.colors, primary: e.target.value },
+                    },
+                  }))
+                }
+              />
+            </Field>
+            <Field label="Secondary color" htmlFor="site-secondary">
+              <TextInput
+                id="site-secondary"
+                value={config.site.colors.secondary}
+                onChange={(e) =>
+                  onConfigChange((prev) => ({
+                    ...prev,
+                    site: {
+                      ...prev.site,
+                      colors: { ...prev.site.colors, secondary: e.target.value },
+                    },
+                  }))
+                }
+              />
+            </Field>
+          </div>
         </div>
       </Card>
 
@@ -189,39 +298,22 @@ export default function ContentEditor({
               }
             />
           </Field>
-        </div>
-      </Card>
-
-      {/* ----------------------------------------------------------------- */}
-      {/* About */}
-      {/* ----------------------------------------------------------------- */}
-      <Card>
-        <CardHeader title="About" description="A short story about the agency." />
-        <div className="space-y-5 px-6 py-6">
-          <Field label="Title" htmlFor="about-title">
-            <TextInput
-              id="about-title"
-              value={config.about.title}
-              onChange={(e) =>
-                onConfigChange((prev) => ({
-                  ...prev,
-                  about: { ...prev.about, title: e.target.value },
-                }))
-              }
-            />
-          </Field>
-          <Field label="Text" htmlFor="about-text">
-            <TextArea
-              id="about-text"
-              rows={4}
-              value={config.about.text}
-              onChange={(e) =>
-                onConfigChange((prev) => ({
-                  ...prev,
-                  about: { ...prev.about, text: e.target.value },
-                }))
-              }
-            />
+          <Field label="Background image" htmlFor="hero-bg" hint={`Background image for the hero section. ${IMAGE_HINT} Leave empty for a plain background.`}>
+            <div className="relative">
+              <ImageIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text/40" />
+              <TextInput
+                id="hero-bg"
+                className="pl-9"
+                placeholder="https://…"
+                value={config.hero.backgroundImage}
+                onChange={(e) =>
+                  onConfigChange((prev) => ({
+                    ...prev,
+                    hero: { ...prev.hero, backgroundImage: e.target.value },
+                  }))
+                }
+              />
+            </div>
           </Field>
         </div>
       </Card>
@@ -330,6 +422,91 @@ export default function ContentEditor({
       </Card>
 
       {/* ----------------------------------------------------------------- */}
+      {/* About */}
+      {/* ----------------------------------------------------------------- */}
+      <Card>
+        <CardHeader title="About" description="A short story about the agency." />
+        <div className="space-y-5 px-6 py-6">
+          <Field label="Title" htmlFor="about-title">
+            <TextInput
+              id="about-title"
+              value={config.about.title}
+              onChange={(e) =>
+                onConfigChange((prev) => ({
+                  ...prev,
+                  about: { ...prev.about, title: e.target.value },
+                }))
+              }
+            />
+          </Field>
+          <Field label="Text" htmlFor="about-text">
+            <TextArea
+              id="about-text"
+              rows={4}
+              value={config.about.text}
+              onChange={(e) =>
+                onConfigChange((prev) => ({
+                  ...prev,
+                  about: { ...prev.about, text: e.target.value },
+                }))
+              }
+            />
+          </Field>
+        </div>
+      </Card>
+
+      {/* ----------------------------------------------------------------- */}
+      {/* Portfolio */}
+      {/* ----------------------------------------------------------------- */}
+      <Card>
+        <CardHeader
+          title="Portfolio"
+          description="Projects loaded from work.json."
+          action={
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() =>
+                onWorkChange((prev) => [
+                  ...prev,
+                  {
+                    id: `project-${Date.now()}`,
+                    title: 'New project',
+                    category: '',
+                    description: '',
+                    image: '',
+                  },
+                ])
+              }
+            >
+              <Plus className="h-4 w-4" />
+              Add project
+            </Button>
+          }
+        />
+        <div className="space-y-4 px-6 py-6">
+          {work.length === 0 && (
+            <p className="text-sm text-text/50">No projects yet. Add one to get started.</p>
+          )}
+          {work.map((project, index) => (
+            <ProjectRow
+              key={project.id}
+              project={project}
+              index={index}
+              onChange={(updated) =>
+                onWorkChange((prev) =>
+                  prev.map((p, i) => (i === index ? updated : p)),
+                )
+              }
+              onRemove={() =>
+                onWorkChange((prev) => prev.filter((_, i) => i !== index))
+              }
+            />
+          ))}
+        </div>
+      </Card>
+
+      {/* ----------------------------------------------------------------- */}
       {/* Contact */}
       {/* ----------------------------------------------------------------- */}
       <Card>
@@ -343,6 +520,19 @@ export default function ContentEditor({
                 onConfigChange((prev) => ({
                   ...prev,
                   contact: { ...prev.contact, title: e.target.value },
+                }))
+              }
+            />
+          </Field>
+          <Field label="Subtitle" htmlFor="contact-subtitle" hint="Supporting text shown under the title.">
+            <TextArea
+              id="contact-subtitle"
+              rows={2}
+              value={config.contact.subtitle}
+              onChange={(e) =>
+                onConfigChange((prev) => ({
+                  ...prev,
+                  contact: { ...prev.contact, subtitle: e.target.value },
                 }))
               }
             />
@@ -374,57 +564,6 @@ export default function ContentEditor({
               />
             </Field>
           </div>
-        </div>
-      </Card>
-
-      {/* ----------------------------------------------------------------- */}
-      {/* Portfolio */}
-      {/* ----------------------------------------------------------------- */}
-      <Card>
-        <CardHeader
-          title="Portfolio"
-          description="Projects loaded from work.json."
-          action={
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={() =>
-                onWorkChange((prev) => [
-                  ...prev,
-                  {
-                    id: `project-${Date.now()}`,
-                    title: 'New project',
-                    category: '',
-                    description: '',
-                    image: '/images/project.jpg',
-                  },
-                ])
-              }
-            >
-              <Plus className="h-4 w-4" />
-              Add project
-            </Button>
-          }
-        />
-        <div className="space-y-4 px-6 py-6">
-          {work.length === 0 && (
-            <p className="text-sm text-text/50">No projects yet. Add one to get started.</p>
-          )}
-          {work.map((project, index) => (
-            <ProjectRow
-              key={project.id}
-              project={project}
-              index={index}
-              onChange={(updated) =>
-                onWorkChange((prev) =>
-                  prev.map((p, i) => (i === index ? updated : p)),
-                )
-              }
-              onRemove={() =>
-                onWorkChange((prev) => prev.filter((_, i) => i !== index))
-              }
-            />
-          ))}
         </div>
       </Card>
     </div>
@@ -466,11 +605,12 @@ function ProjectRow({
             onChange={(e) => onChange({ ...project, category: e.target.value })}
           />
         </Field>
-        <Field label="Image path" hint="Relative path in /public, e.g. /images/project1.jpg">
+        <Field label="Image" hint={`Direct image URL preferred. ${IMAGE_HINT}`}>
           <div className="relative">
             <ImageIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text/40" />
             <TextInput
               className="pl-9"
+              placeholder="https://…"
               value={project.image}
               onChange={(e) => onChange({ ...project, image: e.target.value })}
             />

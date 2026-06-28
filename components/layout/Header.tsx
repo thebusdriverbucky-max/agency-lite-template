@@ -2,11 +2,21 @@ import Link from 'next/link';
 import config from '@/content/config.json';
 
 export default function Header() {
+  const { name, logo } = config.site;
   return (
     <header className="fixed top-0 w-full z-50 bg-bg/80 backdrop-blur-md border-b border-text/10">
       <div className="container mx-auto px-6 h-16 flex items-center justify-between">
-        <Link href="/" className="text-text font-bold tracking-tight">
-          {config.site.name}
+        <Link href="/" className="flex items-center gap-2 text-text font-bold tracking-tight">
+          {logo ? (
+            /* eslint-disable-next-line @next/next/no-img-element */
+            <img
+              src={logo}
+              alt={name}
+              className="h-8 w-auto max-w-[160px] object-contain"
+            />
+          ) : (
+            name
+          )}
         </Link>
         <nav className="hidden md:flex gap-8 text-sm text-text/70">
           <Link href="#services" className="hover:text-accent transition-colors">Services</Link>

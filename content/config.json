@@ -3,6 +3,12 @@
   "site": {
     "name": "Agency Lite",
     "description": "A lightweight template for creative agencies.",
+    "url": "https://example.com",
+    "logo": "",
+    "ogImage": "",
+    "keywords": ["agency", "template", "portfolio", "creative"],
+    "locale": "en_US",
+    "twitter": "@yourhandle",
     "colors": {
       "primary": "#000000",
       "secondary": "#ffffff"
@@ -11,7 +17,8 @@
   "hero": {
     "title": "We build digital experiences",
     "subtitle": "Creative solutions for modern brands.",
-    "ctaText": "Get in touch"
+    "ctaText": "Get in touch",
+    "backgroundImage": "https://i.imgur.com/nUrHXB2.png"
   },
   "about": {
     "title": "About Us",
@@ -36,6 +43,7 @@
   ],
   "contact": {
     "title": "Let's work together",
+    "subtitle": "Have a project in mind? We'd love to hear about it.",
     "email": "hello@agencylite.com",
     "buttonText": "Send an email"
   }

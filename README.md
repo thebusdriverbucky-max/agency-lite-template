@@ -51,6 +51,29 @@ Edit `content/work.json` to update your portfolio projects.
 
 Push changes to GitHub → Vercel auto-rebuilds. No redeploy button needed.
 
+### Images
+
+**All images in this template are configured by URL (link).** Paste a direct
+image link into the relevant field in the admin panel (CMS) or in the JSON
+files — for example the hero background, the site logo, the OG image, and each
+portfolio project image.
+
+```json
+{
+  "hero": { "backgroundImage": "https://i.imgur.com/your-image.png" },
+  "site": { "logo": "https://example.com/logo.png", "ogImage": "https://example.com/og.png" }
+}
+```
+
+> **Tip:** Use a direct link that ends in `.png`, `.jpg`, `.webp`, etc.
+> (e.g. from Imgur, Cloudinary, or your own CDN). Avoid page links that only
+> *display* an image — they won't render.
+
+**Fallback (advanced):** If you prefer to commit image files to your repo,
+drop them into the `public/` folder and reference them with a path starting
+from the root, e.g. `/images/my-photo.jpg`. The recommended approach is still
+to use a direct URL link.
+
 ## Built with
 
 Next.js 15 · TypeScript · Tailwind CSS · No database
