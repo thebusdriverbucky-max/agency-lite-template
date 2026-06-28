@@ -27,6 +27,8 @@ export interface SiteConfig {
   locale: string;
   /** Twitter @handle for Twitter card metadata. */
   twitter: string;
+  whatsapp?: string;
+  whatsappMessage?: string;
   colors: {
     primary: string;
     secondary: string;

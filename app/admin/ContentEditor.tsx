@@ -221,6 +221,35 @@ export default function ContentEditor({
           </Field>
 
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+            <Field label="WhatsApp Number" htmlFor="site-whatsapp" hint="Enter full phone number with country code (numbers only, e.g., 79991234567). Leave empty to hide.">
+              <TextInput
+                id="site-whatsapp"
+                placeholder="79991234567"
+                value={config.site.whatsapp ?? ''}
+                onChange={(e) =>
+                  onConfigChange((prev) => ({
+                    ...prev,
+                    site: { ...prev.site, whatsapp: e.target.value },
+                  }))
+                }
+              />
+            </Field>
+            <Field label="WhatsApp Message Template" htmlFor="site-whatsapp-msg" hint="Default text that will pre-fill the chat for the user.">
+              <TextInput
+                id="site-whatsapp-msg"
+                placeholder="Hello! I'm interested in working with you."
+                value={config.site.whatsappMessage ?? ''}
+                onChange={(e) =>
+                  onConfigChange((prev) => ({
+                    ...prev,
+                    site: { ...prev.site, whatsappMessage: e.target.value },
+                  }))
+                }
+              />
+            </Field>
+          </div>
+
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
             <Field label="Primary color" htmlFor="site-primary">
               <TextInput
                 id="site-primary"

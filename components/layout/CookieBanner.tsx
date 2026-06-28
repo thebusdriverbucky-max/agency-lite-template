@@ -2,9 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import config from '@/content/config.json';
 
 export default function CookieBanner() {
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
@@ -18,6 +20,9 @@ export default function CookieBanner() {
     localStorage.setItem('cookie_consent', 'accepted');
     setIsOpen(false);
   };
+
+  // Hide on admin routes so it doesn't block the CMS UI
+  if (pathname?.startsWith('/admin')) return null;
 
   if (!isOpen) return null;
 
