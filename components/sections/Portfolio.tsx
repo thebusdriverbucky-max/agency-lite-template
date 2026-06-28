@@ -1,5 +1,4 @@
 import work from '@/content/work.json';
-import Image from 'next/image';
 
 export default function Portfolio() {
   return (
@@ -10,8 +9,17 @@ export default function Portfolio() {
           {work.map((project) => (
             <div key={project.id} className="group cursor-pointer">
               <div className="relative aspect-video rounded-2xl overflow-hidden bg-text/5 mb-6 border border-text/10">
+                {project.image && (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img
+                    src={project.image}
+                    alt={project.title}
+                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    loading="lazy"
+                  />
+                )}
                 {/* Fallback layout if no images */}
-                <div className="absolute inset-0 flex items-center justify-center text-text text-6xl font-bold opacity-10">
+                <div className="absolute inset-0 flex items-center justify-center text-text text-6xl font-bold opacity-10 pointer-events-none">
                   {project.title.substring(0, 1)}
                 </div>
               </div>

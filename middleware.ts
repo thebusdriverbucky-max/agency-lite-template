@@ -5,6 +5,8 @@ import { verifyLicenseToken, fetchLicenseValidation, LICENSE_COOKIE_NAME } from 
 const LICENSE_SKIP_PATHS = [
   '/license-required',
   '/api/auth',
+  '/api/admin',
+  '/admin',
   '/_next',
   '/favicon.ico',
 ];
