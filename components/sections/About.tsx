@@ -1,9 +1,27 @@
 import config from '@/content/config.json';
+import Link from 'next/link';
+import { type Config } from '@/lib/github';
 
 export default function About() {
-  const { about } = config;
+  const typedConfig = config as unknown as Config;
+  const { about } = typedConfig;
+  const sectionOpacity = about.opacity !== undefined ? about.opacity : 1;
+  const sectionLink = about.link;
+
   return (
-    <section id="about" className="relative py-32 bg-bg overflow-hidden">
+    <section
+      id="about"
+      className="relative py-32 bg-bg overflow-hidden"
+      style={{ opacity: sectionOpacity }}
+    >
+      {sectionLink && (
+        <Link
+          href={sectionLink}
+          className="absolute inset-0 z-20 cursor-pointer"
+          aria-label={about.title || "Section link"}
+        />
+      )}
+
       {/* Premium Minimalist Background Decorations */}
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
         {/* Soft Accent Glow behind the text */}
@@ -16,11 +34,13 @@ export default function About() {
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1px] h-16 bg-gradient-to-b from-text/10 to-transparent" />
       </div>
 
-      <div className="relative z-10 container mx-auto px-6 max-w-3xl text-center">
-        <h2 className="text-3xl md:text-4xl font-bold text-text mb-8 tracking-tight">{about.title}</h2>
-        <p className="text-xl text-text/70 leading-relaxed">
-          {about.text}
-        </p>
+      <div className="relative z-30 container mx-auto px-6 max-w-3xl text-center pointer-events-none">
+        <div className="pointer-events-auto">
+          <h2 className="text-3xl md:text-4xl font-bold text-text mb-8 tracking-tight">{about.title}</h2>
+          <p className="text-xl text-text/70 leading-relaxed">
+            {about.text}
+          </p>
+        </div>
       </div>
     </section>
   );

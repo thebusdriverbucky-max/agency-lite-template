@@ -41,11 +41,16 @@ export interface HeroConfig {
   ctaText: string;
   /** Background image URL for the hero section. Leave empty for a plain background. */
   backgroundImage: string;
+  imageOpacity?: number;
+  opacity?: number;
+  link?: string;
 }
 
 export interface AboutConfig {
   title: string;
   text: string;
+  opacity?: number;
+  link?: string;
 }
 
 export interface ServiceItem {
@@ -59,11 +64,23 @@ export interface ContactConfig {
   subtitle: string;
   email: string;
   buttonText: string;
+  opacity?: number;
+  link?: string;
 }
 
 export interface LegalConfig {
   title: string;
   text: string;
+}
+
+export interface ServicesConfig {
+  opacity?: number;
+  link?: string;
+}
+
+export interface PortfolioConfig {
+  opacity?: number;
+  link?: string;
 }
 
 export interface Config {
@@ -72,6 +89,8 @@ export interface Config {
   hero: HeroConfig;
   about: AboutConfig;
   services: ServiceItem[];
+  servicesConfig?: ServicesConfig;
+  portfolioConfig?: PortfolioConfig;
   contact: ContactConfig;
   privacyPolicy?: LegalConfig;
   termsOfService?: LegalConfig;

@@ -1,5 +1,7 @@
 import config from '@/content/config.json';
+import Link from 'next/link';
 import { Code, Palette, Lightbulb } from 'lucide-react';
+import { type Config } from '@/lib/github';
 
 const icons = {
   Code: Code,
@@ -8,9 +10,25 @@ const icons = {
 };
 
 export default function Services() {
-  const { services } = config;
+  const typedConfig = config as unknown as Config;
+  const { services, servicesConfig } = typedConfig;
+  const sectionOpacity = servicesConfig?.opacity !== undefined ? servicesConfig.opacity : 1;
+  const sectionLink = servicesConfig?.link;
+
   return (
-    <section id="services" className="relative py-32 bg-bg overflow-hidden">
+    <section
+      id="services"
+      className="relative py-32 bg-bg overflow-hidden"
+      style={{ opacity: sectionOpacity }}
+    >
+      {sectionLink && (
+        <Link
+          href={sectionLink}
+          className="absolute inset-0 z-20 cursor-pointer"
+          aria-label="Services link"
+        />
+      )}
+
       {/* Premium Minimalist Background Decorations */}
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
         {/* Soft Accent Glow */}
@@ -26,19 +44,21 @@ export default function Services() {
         />
       </div>
 
-      <div className="relative z-10 container mx-auto px-6">
-        <h2 className="text-3xl md:text-4xl font-bold text-text mb-16 tracking-tight">Services</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {services.map((service, index) => {
-            const Icon = icons[service.icon as keyof typeof icons] || Code;
-            return (
-              <div key={index} className="p-8 border border-text/10 rounded-2xl bg-bg hover:border-accent transition-colors">
-                <Icon className="w-10 h-10 text-accent mb-6" strokeWidth={1.5} />
-                <h3 className="text-xl font-semibold text-text mb-3">{service.title}</h3>
-                <p className="text-text/70 leading-relaxed">{service.description}</p>
-              </div>
-            );
-          })}
+      <div className="relative z-30 container mx-auto px-6 pointer-events-none">
+        <div className="pointer-events-auto">
+          <h2 className="text-3xl md:text-4xl font-bold text-text mb-16 tracking-tight">Services</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {services.map((service, index) => {
+              const Icon = icons[service.icon as keyof typeof icons] || Code;
+              return (
+                <div key={index} className="p-8 border border-text/10 rounded-2xl bg-bg hover:border-accent transition-colors">
+                  <Icon className="w-10 h-10 text-accent mb-6" strokeWidth={1.5} />
+                  <h3 className="text-xl font-semibold text-text mb-3">{service.title}</h3>
+                  <p className="text-text/70 leading-relaxed">{service.description}</p>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </section>

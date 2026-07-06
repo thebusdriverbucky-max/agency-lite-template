@@ -25,11 +25,24 @@
     "title": "We build digital experiences",
     "subtitle": "Creative solutions for modern brands.",
     "ctaText": "Get in touch",
-    "backgroundImage": "https://i.imgur.com/nUrHXB2.png"
+    "backgroundImage": "https://i.imgur.com/nUrHXB2.png",
+    "imageOpacity": 1,
+    "opacity": 1,
+    "link": ""
   },
   "about": {
     "title": "About Us",
-    "text": "We are a team of passionate designers and developers building modern digital products. Our focus is on clean aesthetics and exceptional performance."
+    "text": "We are a team of passionate designers and developers building modern digital products. Our focus is on clean aesthetics and exceptional performance.",
+    "opacity": 1,
+    "link": ""
+  },
+  "servicesConfig": {
+    "opacity": 1,
+    "link": ""
+  },
+  "portfolioConfig": {
+    "opacity": 1,
+    "link": ""
   },
   "services": [
     {
@@ -52,7 +65,9 @@
     "title": "Let's work together",
     "subtitle": "Have a project in mind? We'd love to hear about it.",
     "email": "hello@agencylite.com",
-    "buttonText": "Send an email"
+    "buttonText": "Send an email",
+    "opacity": 1,
+    "link": ""
   },
   "privacyPolicy": {
     "title": "Privacy Policy",

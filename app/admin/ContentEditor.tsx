@@ -344,6 +344,76 @@ export default function ContentEditor({
               />
             </div>
           </Field>
+
+          <div className="grid grid-cols-1 gap-5 border-t border-text/10 pt-5 sm:grid-cols-2">
+            <Field label="Background image opacity" hint="Adjust the background image visibility.">
+              <div className="flex items-center gap-3">
+                <input
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.05"
+                  className="w-full accent-accent bg-text/10 rounded-lg appearance-none h-2"
+                  value={config.hero.imageOpacity ?? 1}
+                  onChange={(e) =>
+                    onConfigChange((prev) => ({
+                      ...prev,
+                      hero: {
+                        ...prev.hero,
+                        imageOpacity: parseFloat(e.target.value),
+                      },
+                    }))
+                  }
+                />
+                <span className="text-sm font-medium text-text/80 min-w-[3rem] text-right">
+                  {Math.round((config.hero.imageOpacity ?? 1) * 100)}%
+                </span>
+              </div>
+            </Field>
+
+            <Field label="Section opacity" hint="Adjust the visibility of the whole Hero section.">
+              <div className="flex items-center gap-3">
+                <input
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.05"
+                  className="w-full accent-accent bg-text/10 rounded-lg appearance-none h-2"
+                  value={config.hero.opacity ?? 1}
+                  onChange={(e) =>
+                    onConfigChange((prev) => ({
+                      ...prev,
+                      hero: {
+                        ...prev.hero,
+                        opacity: parseFloat(e.target.value),
+                      },
+                    }))
+                  }
+                />
+                <span className="text-sm font-medium text-text/80 min-w-[3rem] text-right">
+                  {Math.round((config.hero.opacity ?? 1) * 100)}%
+                </span>
+              </div>
+            </Field>
+
+            <div className="sm:col-span-2">
+              <Field label="Section link" hint="Optional link for the whole Hero section.">
+                <TextInput
+                  placeholder="https://..."
+                  value={config.hero.link ?? ''}
+                  onChange={(e) =>
+                    onConfigChange((prev) => ({
+                      ...prev,
+                      hero: {
+                        ...prev.hero,
+                        link: e.target.value,
+                      },
+                    }))
+                  }
+                />
+              </Field>
+            </div>
+          </div>
         </div>
       </Card>
 
@@ -374,6 +444,49 @@ export default function ContentEditor({
           }
         />
         <div className="space-y-4 px-6 py-6">
+          {/* Section settings */}
+          <div className="grid grid-cols-1 gap-5 border-b border-text/10 pb-6 sm:grid-cols-2">
+            <Field label="Section opacity" hint="Adjust the visibility of the whole Services section.">
+              <div className="flex items-center gap-3">
+                <input
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.05"
+                  className="w-full accent-accent bg-text/10 rounded-lg appearance-none h-2"
+                  value={config.servicesConfig?.opacity ?? 1}
+                  onChange={(e) =>
+                    onConfigChange((prev) => ({
+                      ...prev,
+                      servicesConfig: {
+                        ...(prev.servicesConfig ?? {}),
+                        opacity: parseFloat(e.target.value),
+                      },
+                    }))
+                  }
+                />
+                <span className="text-sm font-medium text-text/80 min-w-[3rem] text-right">
+                  {Math.round((config.servicesConfig?.opacity ?? 1) * 100)}%
+                </span>
+              </div>
+            </Field>
+            <Field label="Section link" hint="Optional link for the whole Services section.">
+              <TextInput
+                placeholder="https://..."
+                value={config.servicesConfig?.link ?? ''}
+                onChange={(e) =>
+                  onConfigChange((prev) => ({
+                    ...prev,
+                    servicesConfig: {
+                      ...(prev.servicesConfig ?? {}),
+                      link: e.target.value,
+                    },
+                  }))
+                }
+              />
+            </Field>
+          </div>
+
           {config.services.length === 0 && (
             <p className="text-sm text-text/50">No services yet. Add one to get started.</p>
           )}
@@ -481,6 +594,48 @@ export default function ContentEditor({
               }
             />
           </Field>
+
+          <div className="grid grid-cols-1 gap-5 border-t border-text/10 pt-5 sm:grid-cols-2">
+            <Field label="Section opacity" hint="Adjust the visibility of the whole About section.">
+              <div className="flex items-center gap-3">
+                <input
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.05"
+                  className="w-full accent-accent bg-text/10 rounded-lg appearance-none h-2"
+                  value={config.about.opacity ?? 1}
+                  onChange={(e) =>
+                    onConfigChange((prev) => ({
+                      ...prev,
+                      about: {
+                        ...prev.about,
+                        opacity: parseFloat(e.target.value),
+                      },
+                    }))
+                  }
+                />
+                <span className="text-sm font-medium text-text/80 min-w-[3rem] text-right">
+                  {Math.round((config.about.opacity ?? 1) * 100)}%
+                </span>
+              </div>
+            </Field>
+            <Field label="Section link" hint="Optional link for the whole About section.">
+              <TextInput
+                placeholder="https://..."
+                value={config.about.link ?? ''}
+                onChange={(e) =>
+                  onConfigChange((prev) => ({
+                    ...prev,
+                    about: {
+                      ...prev.about,
+                      link: e.target.value,
+                    },
+                  }))
+                }
+              />
+            </Field>
+          </div>
         </div>
       </Card>
 
@@ -514,6 +669,49 @@ export default function ContentEditor({
           }
         />
         <div className="space-y-4 px-6 py-6">
+          {/* Section settings */}
+          <div className="grid grid-cols-1 gap-5 border-b border-text/10 pb-6 sm:grid-cols-2">
+            <Field label="Section opacity" hint="Adjust the visibility of the whole Portfolio section.">
+              <div className="flex items-center gap-3">
+                <input
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.05"
+                  className="w-full accent-accent bg-text/10 rounded-lg appearance-none h-2"
+                  value={config.portfolioConfig?.opacity ?? 1}
+                  onChange={(e) =>
+                    onConfigChange((prev) => ({
+                      ...prev,
+                      portfolioConfig: {
+                        ...(prev.portfolioConfig ?? {}),
+                        opacity: parseFloat(e.target.value),
+                      },
+                    }))
+                  }
+                />
+                <span className="text-sm font-medium text-text/80 min-w-[3rem] text-right">
+                  {Math.round((config.portfolioConfig?.opacity ?? 1) * 100)}%
+                </span>
+              </div>
+            </Field>
+            <Field label="Section link" hint="Optional link for the whole Portfolio section.">
+              <TextInput
+                placeholder="https://..."
+                value={config.portfolioConfig?.link ?? ''}
+                onChange={(e) =>
+                  onConfigChange((prev) => ({
+                    ...prev,
+                    portfolioConfig: {
+                      ...(prev.portfolioConfig ?? {}),
+                      link: e.target.value,
+                    },
+                  }))
+                }
+              />
+            </Field>
+          </div>
+
           {work.length === 0 && (
             <p className="text-sm text-text/50">No projects yet. Add one to get started.</p>
           )}
@@ -588,6 +786,48 @@ export default function ContentEditor({
                   onConfigChange((prev) => ({
                     ...prev,
                     contact: { ...prev.contact, buttonText: e.target.value },
+                  }))
+                }
+              />
+            </Field>
+          </div>
+
+          <div className="grid grid-cols-1 gap-5 border-t border-text/10 pt-5 sm:grid-cols-2">
+            <Field label="Section opacity" hint="Adjust the visibility of the whole Contact section.">
+              <div className="flex items-center gap-3">
+                <input
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.05"
+                  className="w-full accent-accent bg-text/10 rounded-lg appearance-none h-2"
+                  value={config.contact.opacity ?? 1}
+                  onChange={(e) =>
+                    onConfigChange((prev) => ({
+                      ...prev,
+                      contact: {
+                        ...prev.contact,
+                        opacity: parseFloat(e.target.value),
+                      },
+                    }))
+                  }
+                />
+                <span className="text-sm font-medium text-text/80 min-w-[3rem] text-right">
+                  {Math.round((config.contact.opacity ?? 1) * 100)}%
+                </span>
+              </div>
+            </Field>
+            <Field label="Section link" hint="Optional link for the whole Contact section.">
+              <TextInput
+                placeholder="https://..."
+                value={config.contact.link ?? ''}
+                onChange={(e) =>
+                  onConfigChange((prev) => ({
+                    ...prev,
+                    contact: {
+                      ...prev.contact,
+                      link: e.target.value,
+                    },
                   }))
                 }
               />

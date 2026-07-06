@@ -1,9 +1,27 @@
 import config from '@/content/config.json';
+import Link from 'next/link';
+import { type Config } from '@/lib/github';
 
 export default function Contact() {
-  const { contact } = config;
+  const typedConfig = config as unknown as Config;
+  const { contact } = typedConfig;
+  const sectionOpacity = contact.opacity !== undefined ? contact.opacity : 1;
+  const sectionLink = contact.link;
+
   return (
-    <section id="contact" className="relative py-32 bg-bg border-t border-text/10 overflow-hidden">
+    <section
+      id="contact"
+      className="relative py-32 bg-bg border-t border-text/10 overflow-hidden"
+      style={{ opacity: sectionOpacity }}
+    >
+      {sectionLink && (
+        <Link
+          href={sectionLink}
+          className="absolute inset-0 z-20 cursor-pointer"
+          aria-label={contact.title || "Contact link"}
+        />
+      )}
+
       {/* Premium Minimalist Background Decorations */}
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
         {/* Soft, rich ambient glow centered on the section */}
@@ -23,17 +41,19 @@ export default function Contact() {
         />
       </div>
 
-      <div className="relative z-10 container mx-auto px-6 text-center flex flex-col items-center">
-        <h2 className="text-4xl md:text-5xl font-bold text-text mb-6 tracking-tight">{contact.title}</h2>
-        {contact.subtitle && (
-          <p className="text-xl text-text/70 mb-10 max-w-2xl">{contact.subtitle}</p>
-        )}
-        <a
-          href={`mailto:${contact.email}`}
-          className="inline-flex items-center justify-center px-8 py-4 bg-accent text-bg rounded-full font-medium hover:opacity-90 transition-opacity text-lg"
-        >
-          {contact.buttonText}
-        </a>
+      <div className="relative z-30 container mx-auto px-6 text-center flex flex-col items-center pointer-events-none">
+        <div className="pointer-events-auto flex flex-col items-center">
+          <h2 className="text-4xl md:text-5xl font-bold text-text mb-6 tracking-tight">{contact.title}</h2>
+          {contact.subtitle && (
+            <p className="text-xl text-text/70 mb-10 max-w-2xl">{contact.subtitle}</p>
+          )}
+          <a
+            href={`mailto:${contact.email}`}
+            className="inline-flex items-center justify-center px-8 py-4 bg-accent text-bg rounded-full font-medium hover:opacity-90 transition-opacity text-lg"
+          >
+            {contact.buttonText}
+          </a>
+        </div>
       </div>
     </section>
   );
