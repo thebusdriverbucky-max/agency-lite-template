@@ -15,30 +15,6 @@ export default function Hero() {
       className="relative min-h-screen flex items-center justify-center pt-16 bg-bg text-center overflow-hidden"
       style={{ opacity: sectionOpacity }}
     >
-      {hasBg && (
-        <>
-          {/* Background image (URL from config). Falls back to plain bg if empty. */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={hero.backgroundImage}
-            alt=""
-            aria-hidden="true"
-            className="absolute inset-0 h-full w-full object-cover"
-            style={{ opacity: imgOpacity }}
-          />
-          {/* Dark overlay so text stays readable over any image */}
-          <div className="absolute inset-0 bg-bg/70" />
-        </>
-      )}
-
-      {sectionLink && (
-        <Link
-          href={sectionLink}
-          className="absolute inset-0 z-20 cursor-pointer"
-          aria-label={hero.title || "Section link"}
-        />
-      )}
-
       {/* Premium Minimalist Background Decorations */}
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
         {/* Soft Ambient Glow (blends beautifully on solid backgrounds, and adds depth on images) */}
@@ -63,6 +39,30 @@ export default function Hero() {
           <div className="w-[1px] h-10 bg-gradient-to-b from-accent/50 to-transparent animate-pulse" />
         </div>
       </div>
+
+      {hasBg && (
+        <>
+          {/* Background image (URL from config). Falls back to plain bg if empty. */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={hero.backgroundImage}
+            alt=""
+            aria-hidden="true"
+            className="absolute inset-0 h-full w-full object-cover"
+            style={{ opacity: imgOpacity }}
+          />
+          {/* Dark overlay so text stays readable over any image */}
+          <div className="absolute inset-0 bg-bg/70" />
+        </>
+      )}
+
+      {sectionLink && (
+        <Link
+          href={sectionLink}
+          className="absolute inset-0 z-20 cursor-pointer"
+          aria-label={hero.title || "Section link"}
+        />
+      )}
 
       <div className="relative z-30 container mx-auto px-6 max-w-4xl flex flex-col items-center pointer-events-none">
         <div className="pointer-events-auto flex flex-col items-center">
