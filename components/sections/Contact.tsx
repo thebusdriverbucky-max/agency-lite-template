@@ -3,8 +3,27 @@ import config from '@/content/config.json';
 export default function Contact() {
   const { contact } = config;
   return (
-    <section id="contact" className="py-32 bg-bg border-t border-text/10">
-      <div className="container mx-auto px-6 text-center flex flex-col items-center">
+    <section id="contact" className="relative py-32 bg-bg border-t border-text/10 overflow-hidden">
+      {/* Premium Minimalist Background Decorations */}
+      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+        {/* Soft, rich ambient glow centered on the section */}
+        <div
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] sm:w-[500px] h-[300px] sm:h-[500px] rounded-full bg-accent blur-[85px] sm:blur-[120px]"
+          style={{ opacity: 'var(--decor-glow-opacity, 0.12)' }}
+        />
+
+        {/* Concentric subtle decorative circles */}
+        <div
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] sm:w-[600px] h-[400px] sm:h-[600px] border border-text rounded-full"
+          style={{ opacity: 'var(--decor-line-text-opacity, 0.05)', borderWidth: 'var(--decor-border-width, 1px)' }}
+        />
+        <div
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] sm:w-[800px] h-[600px] sm:h-[800px] border border-accent rounded-full"
+          style={{ opacity: 'var(--decor-line-accent-opacity, 0.05)', borderWidth: 'var(--decor-border-width, 1px)' }}
+        />
+      </div>
+
+      <div className="relative z-10 container mx-auto px-6 text-center flex flex-col items-center">
         <h2 className="text-4xl md:text-5xl font-bold text-text mb-6 tracking-tight">{contact.title}</h2>
         {contact.subtitle && (
           <p className="text-xl text-text/70 mb-10 max-w-2xl">{contact.subtitle}</p>

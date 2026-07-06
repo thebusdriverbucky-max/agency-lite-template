@@ -35,22 +35,38 @@
   --bg: #0f172a;
   --accent: #14b8a6;
   --text: #f1f5f9;
+  --decor-glow-opacity: 0.15;
+  --decor-line-accent-opacity: 0.12;
+  --decor-line-text-opacity: 0.06;
+  --decor-border-width: 1px;
 }
 
 [data-theme="dark-amber"] {
   --bg: #0f172a;
   --accent: #f59e0b;
   --text: #f1f5f9;
+  --decor-glow-opacity: 0.15;
+  --decor-line-accent-opacity: 0.12;
+  --decor-line-text-opacity: 0.06;
+  --decor-border-width: 1px;
 }
 
 [data-theme="light-slate"] {
   --bg: #f8fafc;
   --accent: #475569;
   --text: #0f172a;
+  --decor-glow-opacity: 0.06;
+  --decor-line-accent-opacity: 0.24;
+  --decor-line-text-opacity: 0.16;
+  --decor-border-width: 1.5px;
 }
 
 [data-theme="light-rose"] {
   --bg: #fafafa;
   --accent: #e11d48;
   --text: #0f172a;
+  --decor-glow-opacity: 0.05;
+  --decor-line-accent-opacity: 0.20;
+  --decor-line-text-opacity: 0.12;
+  --decor-border-width: 1.5px;
 }

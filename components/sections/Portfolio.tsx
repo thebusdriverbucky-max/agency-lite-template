@@ -2,8 +2,23 @@ import work from '@/content/work.json';
 
 export default function Portfolio() {
   return (
-    <section id="portfolio" className="py-32 bg-bg">
-      <div className="container mx-auto px-6">
+    <section id="portfolio" className="relative py-32 bg-bg overflow-hidden">
+      {/* Premium Minimalist Background Decorations */}
+      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+        {/* Soft Ambient Glow on the bottom-left */}
+        <div
+          className="absolute bottom-1/4 left-0 w-[250px] sm:w-[450px] h-[250px] sm:h-[450px] rounded-full bg-accent blur-[80px] sm:blur-[120px]"
+          style={{ opacity: 'var(--decor-glow-opacity, 0.04)' }}
+        />
+
+        {/* Giant subtle outline circle on the right */}
+        <div
+          className="absolute -right-40 top-1/4 w-[300px] sm:w-[650px] h-[300px] sm:h-[650px] border border-accent rounded-full"
+          style={{ opacity: 'var(--decor-line-accent-opacity, 0.05)', borderWidth: 'var(--decor-border-width, 1px)' }}
+        />
+      </div>
+
+      <div className="relative z-10 container mx-auto px-6">
         <h2 className="text-3xl md:text-4xl font-bold text-text mb-16 tracking-tight">Selected Work</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
           {work.map((project) => (
