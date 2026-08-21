@@ -223,7 +223,7 @@ export default function GitHubSetup({ initial, onSaved, onBack }: Props) {
               {showRepoInstructions && (
                 <div className="mt-3 border-t border-text/10 pt-3 text-xs text-text/70 space-y-2">
                   <p>
-                    Simply copy and paste the full repository link from your browser's address bar.
+                    Simply copy and paste the full repository link from your browser’s address bar.
                   </p>
                   <p className="text-accent font-medium">
                     ✨ The input automatically parses and sanitizes it!
