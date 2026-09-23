@@ -31,6 +31,26 @@ export async function verifyLicenseToken(token: string): Promise<boolean> {
   }
 }
 
+// Keep instant deployment one-variable-only: grace tokens use the same bundled
+// verification secret as normal license JWTs, so buyers still configure only
+// LICENSE_KEY. The token is signed and expires automatically after six hours.
+export async function createGraceToken(hours = 6): Promise<string> {
+  return new SignJWT({ grace: true })
+    .setProtectedHeader({ alg: 'HS256' })
+    .setIssuedAt()
+    .setExpirationTime(`${hours}h`)
+    .sign(getLicenseSecret());
+}
+
+export async function verifyGraceToken(token: string): Promise<boolean> {
+  try {
+    const { payload } = await jwtVerify(token, getLicenseSecret());
+    return payload.grace === true;
+  } catch {
+    return false;
+  }
+}
+
 // Fetch fresh validation from license server
 export async function fetchLicenseValidation(): Promise<{
   valid: boolean;
@@ -53,6 +73,12 @@ export async function fetchLicenseValidation(): Promise<{
       }),
       signal: AbortSignal.timeout(10000),
     });
+
+    // A technical server outage should not disable a paid deployment. Invalid,
+    // revoked and malformed licenses return 4xx and remain fail-closed.
+    if (response.status >= 500) {
+      return { valid: true, grace: true };
+    }
 
     const data = await response.json();
 

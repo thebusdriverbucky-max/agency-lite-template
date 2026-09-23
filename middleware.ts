@@ -1,5 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyLicenseToken, fetchLicenseValidation, LICENSE_COOKIE_NAME } from '@/lib/license';
+import {
+  createGraceToken,
+  fetchLicenseValidation,
+  LICENSE_COOKIE_NAME,
+  verifyGraceToken,
+  verifyLicenseToken,
+} from '@/lib/license';
 
 // Paths that skip license check entirely
 const LICENSE_SKIP_PATHS = [
@@ -19,11 +25,11 @@ async function licenseMiddleware(request: NextRequest): Promise<NextResponse | n
     return null;
   }
 
-  // Check existing JWT cookie
+  // Check an existing license JWT or a short-lived signed grace JWT locally.
   const cookieToken = request.cookies.get(LICENSE_COOKIE_NAME)?.value;
-  if (cookieToken && cookieToken !== 'grace') {
-    const isValid = await verifyLicenseToken(cookieToken);
-    if (isValid) return null; // Valid JWT — allow through
+  if (cookieToken) {
+    if (await verifyLicenseToken(cookieToken)) return null;
+    if (await verifyGraceToken(cookieToken)) return null;
   }
 
   // Cookie missing or expired — fetch from license server
@@ -47,7 +53,8 @@ async function licenseMiddleware(request: NextRequest): Promise<NextResponse | n
         path: '/',
       });
     } else if (grace) {
-      response.cookies.set(LICENSE_COOKIE_NAME, 'grace', {
+      const graceToken = await createGraceToken(6);
+      response.cookies.set(LICENSE_COOKIE_NAME, graceToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
