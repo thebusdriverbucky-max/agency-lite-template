@@ -10,7 +10,7 @@ export const metadata = {
 export default function TermsOfServicePage() {
   const termsData = config.termsOfService || {
     title: 'Terms of Service',
-    text: 'Welcome to our website! By accessing or using this site, you agree to comply with and be bound by these Terms of Service. All content on this website, including text, graphics, logos, and design, is our intellectual property and is protected by copyright laws. You agree to use this website only for lawful purposes and in a way that does not infringe upon the rights of others or restrict their use of the website.',
+    text: 'Replace this starter text with terms reviewed for your agency, services, intellectual property, client engagement process, operating countries, and jurisdiction before launch.',
   };
 
   return (

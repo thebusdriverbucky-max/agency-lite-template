@@ -1,0 +1,30 @@
+name: Template CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      LICENSE_KEY: ci-license
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - name: Use pinned npm
+        run: npm install --global npm@10.8.2
+      - run: npm ci
+      - run: npm run manifest:validate
+      - run: npm run content:validate
+      - run: npx tsc --noEmit --incremental false
+      - run: npm run lint
+      - name: Production build without database or provider setup
+        run: npm run build

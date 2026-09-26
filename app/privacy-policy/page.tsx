@@ -10,7 +10,7 @@ export const metadata = {
 export default function PrivacyPolicyPage() {
   const privacyData = config.privacyPolicy || {
     title: 'Privacy Policy',
-    text: 'Your privacy is extremely important to us. This Privacy Policy describes how we collect, use, and protect your information when you visit our website. We only collect personal details that you voluntarily provide to us (for example, by sending an email). We do not share your personal information with third parties except as required by law. By using our website, you consent to the terms of this Privacy Policy.',
+    text: 'Replace this starter text with a privacy policy reviewed for the contact details, analytics, cookies, embedded media, hosting, and other personal data or providers used by your agency before launch.',
   };
 
   return (

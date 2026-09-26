@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useCallback, useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useCallback, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   Database,
   LogOut,
@@ -10,7 +10,7 @@ import {
   Settings as SettingsIcon,
   Sparkles,
   ExternalLink,
-} from 'lucide-react';
+} from "lucide-react";
 import {
   type Config,
   type GitHubSettings,
@@ -18,19 +18,17 @@ import {
   clearGitHubSettings,
   fetchJsonFile,
   loadGitHubSettings,
-  updateJsonFile,
-} from '@/lib/github';
-import GitHubSetup from './GitHubSetup';
-import ContentEditor from './ContentEditor';
-import { Button, Card, StatusBanner, type SaveStatus } from './ui';
+  updateJsonFilesAtomically,
+} from "@/lib/github";
+import GitHubSetup from "./GitHubSetup";
+import ContentEditor from "./ContentEditor";
+import { Button, Card, StatusBanner, type SaveStatus } from "./ui";
 
-const CONFIG_PATH = 'content/config.json';
-const WORK_PATH = 'content/work.json';
+const CONFIG_PATH = "content/config.json";
+const WORK_PATH = "content/work.json";
 
 type LoadState =
-  | { kind: 'idle' }
-  | { kind: 'loading' }
-  | { kind: 'error'; message: string };
+  { kind: "idle" } | { kind: "loading" } | { kind: "error"; message: string };
 
 export default function AdminPanel() {
   const router = useRouter();
@@ -41,11 +39,13 @@ export default function AdminPanel() {
 
   const [config, setConfig] = useState<Config | null>(null);
   const [work, setWork] = useState<Work | null>(null);
-  const [configSha, setConfigSha] = useState<string>('');
-  const [workSha, setWorkSha] = useState<string>('');
+  const [configSha, setConfigSha] = useState<string>("");
+  const [workSha, setWorkSha] = useState<string>("");
+  const [savedConfig, setSavedConfig] = useState<string>("");
+  const [savedWork, setSavedWork] = useState<string>("");
 
-  const [loadState, setLoadState] = useState<LoadState>({ kind: 'idle' });
-  const [saveStatus, setSaveStatus] = useState<SaveStatus>({ kind: 'idle' });
+  const [loadState, setLoadState] = useState<LoadState>({ kind: "idle" });
+  const [saveStatus, setSaveStatus] = useState<SaveStatus>({ kind: "idle" });
   const [loggingOut, setLoggingOut] = useState(false);
 
   // -------------------------------------------------------------------------
@@ -66,8 +66,8 @@ export default function AdminPanel() {
   // -------------------------------------------------------------------------
   const loadContent = useCallback(async (s: GitHubSettings) => {
     await new Promise((resolve) => setTimeout(resolve, 0));
-    setLoadState({ kind: 'loading' });
-    setSaveStatus({ kind: 'idle' });
+    setLoadState({ kind: "loading" });
+    setSaveStatus({ kind: "idle" });
     try {
       const [configFile, workFile] = await Promise.all([
         fetchJsonFile<Config>(s, CONFIG_PATH),
@@ -75,19 +75,21 @@ export default function AdminPanel() {
       ]);
       setConfig(configFile.data);
       setConfigSha(configFile.sha);
+      setSavedConfig(JSON.stringify(configFile.data));
       setWork(workFile.data);
       setWorkSha(workFile.sha);
-      setLoadState({ kind: 'idle' });
+      setSavedWork(JSON.stringify(workFile.data));
+      setLoadState({ kind: "idle" });
     } catch (err) {
       setLoadState({
-        kind: 'error',
-        message: err instanceof Error ? err.message : 'Failed to load content.',
+        kind: "error",
+        message: err instanceof Error ? err.message : "Failed to load content.",
       });
     }
   }, []);
 
   useEffect(() => {
-    if (settings && !config && !work && loadState.kind !== 'loading') {
+    if (settings && !config && !work && loadState.kind !== "loading") {
       const timer = setTimeout(() => {
         void loadContent(settings);
       }, 0);
@@ -104,8 +106,10 @@ export default function AdminPanel() {
     // Reset any previously loaded content so it reloads from the new repo.
     setConfig(null);
     setWork(null);
-    setConfigSha('');
-    setWorkSha('');
+    setConfigSha("");
+    setWorkSha("");
+    setSavedConfig("");
+    setSavedWork("");
     void loadContent(next);
   }
 
@@ -114,47 +118,69 @@ export default function AdminPanel() {
     setSettings(null);
     setConfig(null);
     setWork(null);
-    setConfigSha('');
-    setWorkSha('');
-    setLoadState({ kind: 'idle' });
-    setSaveStatus({ kind: 'idle' });
+    setConfigSha("");
+    setWorkSha("");
+    setSavedConfig("");
+    setSavedWork("");
+    setLoadState({ kind: "idle" });
+    setSaveStatus({ kind: "idle" });
     setShowSetup(true);
   }
 
   async function handleSave() {
     if (!settings || !config || !work) return;
-    setSaveStatus({ kind: 'loading', message: 'Saving…' });
-    try {
-      // Save config.json if it changed.
-      const configResult = await updateJsonFile(
-        settings,
-        CONFIG_PATH,
-        config,
-        configSha,
-        'chore(content): update site config via admin panel',
-      );
-      setConfigSha(configResult.sha);
+    const configSnapshot = JSON.stringify(config);
+    const workSnapshot = JSON.stringify(work);
+    const configChanged = configSnapshot !== savedConfig;
+    const workChanged = workSnapshot !== savedWork;
+    if (!configChanged && !workChanged) {
+      setSaveStatus({
+        kind: "success",
+        message: "No content changes to save.",
+      });
+      return;
+    }
 
-      // Save work.json if it changed.
-      const workResult = await updateJsonFile(
+    setSaveStatus({ kind: "loading", message: "Saving…" });
+    try {
+      const changes = [
+        ...(configChanged
+          ? [{ path: CONFIG_PATH, content: config, expectedSha: configSha }]
+          : []),
+        ...(workChanged
+          ? [{ path: WORK_PATH, content: work, expectedSha: workSha }]
+          : []),
+      ];
+      const result = await updateJsonFilesAtomically(
         settings,
-        WORK_PATH,
-        work,
-        workSha,
-        'chore(content): update portfolio via admin panel',
+        changes,
+        "chore(content): update site content via admin panel",
       );
-      setWorkSha(workResult.sha);
+
+      const configResult = result.files.find(
+        (file) => file.path === CONFIG_PATH,
+      );
+      const workResult = result.files.find((file) => file.path === WORK_PATH);
+      if (configResult) {
+        setConfigSha(configResult.sha);
+        setSavedConfig(configSnapshot);
+      }
+      if (workResult) {
+        setWorkSha(workResult.sha);
+        setSavedWork(workSnapshot);
+      }
 
       setSaveStatus({
-        kind: 'success',
+        kind: "success",
         message:
-          'Success! Changes committed. Vercel is redeploying your site.',
+          "Success! Changes committed atomically. Vercel is redeploying your site.",
       });
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to save changes.';
-      setSaveStatus({ kind: 'error', message });
+      const detail =
+        err instanceof Error ? err.message : "Failed to save changes.";
+      setSaveStatus({ kind: "error", message: detail });
       // On a sha conflict, reload so the editor reflects the remote state.
-      if (message.toLowerCase().includes('conflict')) {
+      if (detail.toLowerCase().includes("conflict")) {
         void loadContent(settings);
       }
     }
@@ -163,7 +189,7 @@ export default function AdminPanel() {
   async function handleLogout() {
     setLoggingOut(true);
     try {
-      await fetch('/api/admin/logout', { method: 'POST' });
+      await fetch("/api/admin/logout", { method: "POST" });
       router.refresh();
     } finally {
       setLoggingOut(false);
@@ -182,7 +208,7 @@ export default function AdminPanel() {
   }
 
   const repoUrl = settings
-    ? `https://github.com/${settings.repo.replace(/^https?:\/\/github\.com\//, '').replace(/\.git$/, '')}`
+    ? `https://github.com/${settings.repo.replace(/^https?:\/\/github\.com\//, "").replace(/\.git$/, "")}`
     : null;
 
   return (
@@ -194,7 +220,9 @@ export default function AdminPanel() {
         <div className="mx-auto flex max-w-4xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
           <div className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-accent" />
-            <span className="text-sm font-semibold tracking-tight">Agency Lite · CMS</span>
+            <span className="text-sm font-semibold tracking-tight">
+              Agency Lite · CMS
+            </span>
           </div>
           <div className="flex items-center gap-2">
             {settings && (
@@ -216,7 +244,9 @@ export default function AdminPanel() {
               loading={loggingOut}
             >
               <LogOut className="h-4 w-4" />
-              <span className="hidden sm:inline">{loggingOut ? 'Signing out…' : 'Logout'}</span>
+              <span className="hidden sm:inline">
+                {loggingOut ? "Signing out…" : "Logout"}
+              </span>
             </Button>
           </div>
         </div>
@@ -242,7 +272,9 @@ export default function AdminPanel() {
                 <div className="flex items-center gap-3">
                   <Database className="h-5 w-5 text-accent" />
                   <div>
-                    <p className="text-sm font-medium text-text">{settings.repo}</p>
+                    <p className="text-sm font-medium text-text">
+                      {settings.repo}
+                    </p>
                     <p className="text-xs text-text/50">
                       branch: {settings.branch}
                     </p>
@@ -264,13 +296,17 @@ export default function AdminPanel() {
                     type="button"
                     variant="secondary"
                     onClick={() => loadContent(settings)}
-                    disabled={loadState.kind === 'loading'}
-                    loading={loadState.kind === 'loading'}
+                    disabled={loadState.kind === "loading"}
+                    loading={loadState.kind === "loading"}
                   >
                     <RefreshCw className="h-4 w-4" />
                     Reload
                   </Button>
-                  <Button type="button" variant="ghost" onClick={handleDisconnect}>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={handleDisconnect}
+                  >
                     Disconnect
                   </Button>
                 </div>
@@ -280,7 +316,7 @@ export default function AdminPanel() {
             {/* ----------------------------------------------------------- */}
             {/* Load error */}
             {/* ----------------------------------------------------------- */}
-            {loadState.kind === 'error' && (
+            {loadState.kind === "error" && (
               <Card className="mb-6 border-red-400/40">
                 <div className="flex flex-col gap-3 px-6 py-5">
                   <p className="text-sm font-medium text-red-400">
@@ -296,7 +332,11 @@ export default function AdminPanel() {
                       <RefreshCw className="h-4 w-4" />
                       Try again
                     </Button>
-                    <Button type="button" variant="ghost" onClick={() => setShowSetup(true)}>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      onClick={() => setShowSetup(true)}
+                    >
                       Edit settings
                     </Button>
                   </div>
@@ -307,7 +347,7 @@ export default function AdminPanel() {
             {/* ----------------------------------------------------------- */}
             {/* Loading skeleton */}
             {/* ----------------------------------------------------------- */}
-            {loadState.kind === 'loading' && !config && (
+            {loadState.kind === "loading" && !config && (
               <div className="flex items-center justify-center py-24 text-text/50">
                 <RefreshCw className="mr-3 h-5 w-5 animate-spin" />
                 Loading content from GitHub…
@@ -335,9 +375,9 @@ export default function AdminPanel() {
                     <div className="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
                       <div className="min-w-0 flex-1">
                         <StatusBanner status={saveStatus} />
-                        {saveStatus.kind === 'idle' && (
+                        {saveStatus.kind === "idle" && (
                           <p className="text-xs text-text/45">
-                            Changes commit directly to {settings.repo} on the{' '}
+                            Changes commit directly to {settings.repo} on the{" "}
                             {settings.branch} branch.
                           </p>
                         )}
@@ -345,8 +385,8 @@ export default function AdminPanel() {
                       <Button
                         type="button"
                         onClick={handleSave}
-                        disabled={saveStatus.kind === 'loading'}
-                        loading={saveStatus.kind === 'loading'}
+                        disabled={saveStatus.kind === "loading"}
+                        loading={saveStatus.kind === "loading"}
                         className="sm:shrink-0"
                       >
                         <Save className="h-4 w-4" />

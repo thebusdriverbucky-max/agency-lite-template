@@ -73,7 +73,7 @@ export default function GitHubSetup({ initial, onSaved, onBack }: Props) {
         <CardHeader
           icon={<Database className="h-5 w-5" />}
           title="Connect your GitHub repository"
-          description="Your content is stored as JSON in this repo. Settings are saved only in this browser."
+          description="Your content is stored as JSON in this repo. The token is kept only in this browser tab."
         />
         <form onSubmit={handleSubmit} className="space-y-5 px-6 py-6">
 
@@ -135,7 +135,7 @@ export default function GitHubSetup({ initial, onSaved, onBack }: Props) {
                     <p className="font-medium text-text">Follow these steps on GitHub:</p>
                     <ul className="list-inside list-disc space-y-1 pl-1">
                       <li><span className="font-semibold text-text">Name & Description:</span> Prefilled automatically.</li>
-                      <li><span className="font-semibold text-text">Expiration:</span> Set to <span className="font-medium text-text">No expiration</span> for continuous access.</li>
+                      <li><span className="font-semibold text-text">Expiration:</span> Choose a short practical expiration and rotate the token before it expires. Do not use a permanent token.</li>
                       <li><span className="font-semibold text-text">Repository access:</span> Select your repository (e.g. choose <span className="font-medium text-text">Only select repositories</span> and select your repo).</li>
                       <li>
                         <span className="font-semibold text-text">Permissions:</span>
@@ -150,7 +150,7 @@ export default function GitHubSetup({ initial, onSaved, onBack }: Props) {
 
                   <div className="flex items-start gap-2 rounded bg-accent/10 p-2 text-accent">
                     <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-                    <span>GitHub will automatically add other basic required scopes (such as Metadata) — this is expected and safe.</span>
+                    <span>Use a fine-grained token limited to this repository, with Contents read/write and Metadata read. The token remains in sessionStorage for this tab and any script running on this origin could access it; disconnect and rotate it if compromise is suspected.</span>
                   </div>
 
                   {/* Thumbnail and button to trigger full screen preview */}

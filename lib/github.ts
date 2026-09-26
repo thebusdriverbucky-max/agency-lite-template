@@ -2,15 +2,18 @@
  * GitHub Contents API helpers for the admin CMS.
  *
  * All functions run client-side only (they rely on `btoa`/`atob` and `fetch`).
- * The personal access token is stored exclusively in `localStorage` and is
- * never sent to the Next.js server.
+ * The personal access token is stored exclusively in this tab's
+ * `sessionStorage` and is never sent to the Next.js server.
  */
+
+import { validateContentFile } from "./content-validation";
 
 // ---------------------------------------------------------------------------
 // Content types (mirror the shape of `content/config.json` & `content/work.json`)
 // ---------------------------------------------------------------------------
 
-export type ThemeName = 'dark-teal' | 'dark-amber' | 'light-slate' | 'light-rose';
+export type ThemeName =
+  "dark-teal" | "dark-amber" | "light-slate" | "light-rose";
 
 export interface SiteConfig {
   name: string;
@@ -107,7 +110,7 @@ export interface Project {
 export type Work = Project[];
 
 // ---------------------------------------------------------------------------
-// GitHub settings (persisted in localStorage)
+// GitHub settings (persisted in sessionStorage)
 // ---------------------------------------------------------------------------
 
 export interface GitHubSettings {
@@ -119,33 +122,35 @@ export interface GitHubSettings {
   branch: string;
 }
 
-export const GITHUB_SETTINGS_KEY = 'github_settings';
+export const GITHUB_SETTINGS_KEY = "github_settings";
 
 export const THEME_OPTIONS: { value: ThemeName; label: string }[] = [
-  { value: 'dark-teal', label: 'Dark Teal' },
-  { value: 'dark-amber', label: 'Dark Amber' },
-  { value: 'light-slate', label: 'Light Slate' },
-  { value: 'light-rose', label: 'Light Rose' },
+  { value: "dark-teal", label: "Dark Teal" },
+  { value: "dark-amber", label: "Dark Amber" },
+  { value: "light-slate", label: "Light Slate" },
+  { value: "light-rose", label: "Light Rose" },
 ];
 
 /** Icon names supported by the public site (see components/sections/Services.tsx). */
-export const SERVICE_ICON_OPTIONS = ['Code', 'Palette', 'Lightbulb'] as const;
+export const SERVICE_ICON_OPTIONS = ["Code", "Palette", "Lightbulb"] as const;
 
 // ---------------------------------------------------------------------------
-// localStorage helpers
+// sessionStorage helpers
 // ---------------------------------------------------------------------------
 
 export function loadGitHubSettings(): GitHubSettings | null {
-  if (typeof window === 'undefined') return null;
+  if (typeof window === "undefined") return null;
   try {
-    const raw = window.localStorage.getItem(GITHUB_SETTINGS_KEY);
+    // Remove persistent credentials left by releases that used localStorage.
+    window.localStorage.removeItem(GITHUB_SETTINGS_KEY);
+    const raw = window.sessionStorage.getItem(GITHUB_SETTINGS_KEY);
     if (!raw) return null;
     const parsed = JSON.parse(raw) as Partial<GitHubSettings>;
     if (!parsed.pat || !parsed.repo) return null;
     return {
       pat: parsed.pat,
       repo: parsed.repo,
-      branch: parsed.branch?.trim() || 'main',
+      branch: parsed.branch?.trim() || "main",
     };
   } catch {
     return null;
@@ -153,12 +158,14 @@ export function loadGitHubSettings(): GitHubSettings | null {
 }
 
 export function saveGitHubSettings(settings: GitHubSettings): void {
-  if (typeof window === 'undefined') return;
-  window.localStorage.setItem(GITHUB_SETTINGS_KEY, JSON.stringify(settings));
+  if (typeof window === "undefined") return;
+  window.sessionStorage.setItem(GITHUB_SETTINGS_KEY, JSON.stringify(settings));
 }
 
 export function clearGitHubSettings(): void {
-  if (typeof window === 'undefined') return;
+  if (typeof window === "undefined") return;
+  window.sessionStorage.removeItem(GITHUB_SETTINGS_KEY);
+  // Remove values saved by releases that used persistent localStorage.
   window.localStorage.removeItem(GITHUB_SETTINGS_KEY);
 }
 
@@ -169,7 +176,7 @@ export function clearGitHubSettings(): void {
 /** Encode a UTF-8 string to base64 (browser-safe, no deprecated `escape`). */
 export function encodeBase64(input: string): string {
   const bytes = new TextEncoder().encode(input);
-  let binary = '';
+  let binary = "";
   for (let i = 0; i < bytes.length; i++) {
     binary += String.fromCharCode(bytes[i]);
   }
@@ -179,7 +186,7 @@ export function encodeBase64(input: string): string {
 /** Decode a base64 string (as returned by the GitHub API) to a UTF-8 string. */
 export function decodeBase64(input: string): string {
   // GitHub inserts newlines every 60 chars in the `content` field — strip them.
-  const clean = input.replace(/\n/g, '');
+  const clean = input.replace(/\n/g, "");
   const binary = atob(clean);
   const bytes = Uint8Array.from(binary, (c) => c.charCodeAt(0));
   return new TextDecoder().decode(bytes);
@@ -189,7 +196,7 @@ export function decodeBase64(input: string): string {
 // GitHub Contents API
 // ---------------------------------------------------------------------------
 
-const API_BASE = 'https://api.github.com';
+const API_BASE = "https://api.github.com";
 
 interface GitHubContentResponse {
   type: string;
@@ -215,14 +222,17 @@ export interface RemoteFile<T> {
 function authHeaders(pat: string): HeadersInit {
   return {
     Authorization: `Bearer ${pat}`,
-    Accept: 'application/vnd.github+json',
-    'X-GitHub-Api-Version': '2022-11-28',
+    Accept: "application/vnd.github+json",
+    "X-GitHub-Api-Version": "2022-11-28",
   };
 }
 
 function parseRepo(repo: string): { owner: string; name: string } {
-  const trimmed = repo.trim().replace(/^https?:\/\/github\.com\//, '').replace(/\.git$/, '');
-  const [owner, name] = trimmed.split('/');
+  const trimmed = repo
+    .trim()
+    .replace(/^https?:\/\/github\.com\//, "")
+    .replace(/\.git$/, "");
+  const [owner, name] = trimmed.split("/");
   if (!owner || !name) {
     throw new Error('Repository must be in the format "owner/name".');
   }
@@ -240,12 +250,16 @@ export async function fetchJsonFile<T>(
   const res = await fetch(url, { headers: authHeaders(settings.pat) });
 
   if (!res.ok) {
-    const err = (await safeJson<GitHubErrorResponse>(res)) as GitHubErrorResponse;
+    const err = (await safeJson<GitHubErrorResponse>(
+      res,
+    )) as GitHubErrorResponse;
     throw new Error(humanizeError(res.status, err));
   }
 
-  const body = (await safeJson<GitHubContentResponse>(res)) as GitHubContentResponse;
-  if (body.type !== 'file' || body.encoding !== 'base64') {
+  const body = (await safeJson<GitHubContentResponse>(
+    res,
+  )) as GitHubContentResponse;
+  if (body.type !== "file" || body.encoding !== "base64") {
     throw new Error(`"${path}" is not a base64-encoded file.`);
   }
 
@@ -256,6 +270,7 @@ export async function fetchJsonFile<T>(
   } catch {
     throw new Error(`"${path}" does not contain valid JSON.`);
   }
+  validateContentFile(path, data);
 
   return { data, sha: body.sha };
 }
@@ -266,6 +281,18 @@ export interface UpdateResult {
   commitUrl?: string;
 }
 
+export interface JsonFileChange {
+  path: string;
+  content: unknown;
+  expectedSha: string;
+}
+
+export interface AtomicUpdateResult {
+  commitSha: string;
+  commitUrl?: string;
+  files: Array<{ path: string; sha: string }>;
+}
+
 /** Create or update a file via a PUT to the Contents API. Requires the current SHA. */
 export async function updateJsonFile(
   settings: GitHubSettings,
@@ -274,16 +301,17 @@ export async function updateJsonFile(
   sha: string,
   message: string,
 ): Promise<UpdateResult> {
+  validateContentFile(path, content);
   const { owner, name } = parseRepo(settings.repo);
   const url = `${API_BASE}/repos/${owner}/${name}/contents/${path}`;
 
-  const encoded = encodeBase64(JSON.stringify(content, null, 2) + '\n');
+  const encoded = encodeBase64(JSON.stringify(content, null, 2) + "\n");
 
   const res = await fetch(url, {
-    method: 'PUT',
+    method: "PUT",
     headers: {
       ...authHeaders(settings.pat),
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
       message,
@@ -294,11 +322,16 @@ export async function updateJsonFile(
   });
 
   if (!res.ok) {
-    const err = (await safeJson<GitHubErrorResponse>(res)) as GitHubErrorResponse;
+    const err = (await safeJson<GitHubErrorResponse>(
+      res,
+    )) as GitHubErrorResponse;
     throw new Error(humanizeError(res.status, err, path));
   }
 
-  const body = (await safeJson<{ content?: { sha: string }; commit?: { html_url?: string } }>(res)) as {
+  const body = (await safeJson<{
+    content?: { sha: string };
+    commit?: { html_url?: string };
+  }>(res)) as {
     content?: { sha: string };
     commit?: { html_url?: string };
   };
@@ -307,6 +340,200 @@ export async function updateJsonFile(
     path,
     sha: body.content?.sha ?? sha,
     commitUrl: body.commit?.html_url,
+  };
+}
+
+/**
+ * Commit multiple JSON files as one atomic branch update.
+ *
+ * Blobs, a tree, and a commit may be created before the ref update, but none of
+ * those objects are visible on the target branch until the final non-force
+ * fast-forward succeeds. A concurrent branch update therefore fails without
+ * publishing a partial content update.
+ */
+export async function updateJsonFilesAtomically(
+  settings: GitHubSettings,
+  changes: JsonFileChange[],
+  message: string,
+): Promise<AtomicUpdateResult> {
+  if (changes.length === 0) {
+    throw new Error("At least one content file change is required.");
+  }
+
+  const uniquePaths = new Set<string>();
+  for (const change of changes) {
+    if (uniquePaths.has(change.path)) {
+      throw new Error(`Duplicate content path "${change.path}".`);
+    }
+    uniquePaths.add(change.path);
+    validateContentFile(change.path, change.content);
+  }
+
+  const { owner, name } = parseRepo(settings.repo);
+  const repoApi = `${API_BASE}/repos/${owner}/${name}`;
+  const branchRef = `heads/${settings.branch}`;
+  const headers = {
+    ...authHeaders(settings.pat),
+    "Content-Type": "application/json",
+  };
+
+  const refResponse = await fetch(
+    `${repoApi}/git/ref/${branchRef.split("/").map(encodeURIComponent).join("/")}`,
+    { headers: authHeaders(settings.pat) },
+  );
+  if (!refResponse.ok) {
+    const err = (await safeJson<GitHubErrorResponse>(
+      refResponse,
+    )) as GitHubErrorResponse;
+    throw new Error(humanizeError(refResponse.status, err));
+  }
+  const ref = (await safeJson<{ object?: { sha?: string } }>(refResponse)) as {
+    object?: { sha?: string };
+  };
+  const headSha = ref.object?.sha;
+  if (!headSha) throw new Error("GitHub did not return the branch head SHA.");
+
+  const currentFiles = await Promise.all(
+    changes.map(async (change) => {
+      const url = `${repoApi}/contents/${change.path}?ref=${encodeURIComponent(headSha)}`;
+      const response = await fetch(url, { headers: authHeaders(settings.pat) });
+      if (!response.ok) {
+        const err = (await safeJson<GitHubErrorResponse>(
+          response,
+        )) as GitHubErrorResponse;
+        throw new Error(humanizeError(response.status, err, change.path));
+      }
+      const file = (await safeJson<GitHubContentResponse>(
+        response,
+      )) as GitHubContentResponse;
+      return { path: change.path, sha: file.sha };
+    }),
+  );
+
+  for (const change of changes) {
+    const currentSha = currentFiles.find(
+      (file) => file.path === change.path,
+    )?.sha;
+    if (!currentSha || currentSha !== change.expectedSha) {
+      throw new Error(
+        `Conflict saving "${change.path}". The file changed on GitHub — reload and try again.`,
+      );
+    }
+  }
+
+  const commitResponse = await fetch(`${repoApi}/git/commits/${headSha}`, {
+    headers: authHeaders(settings.pat),
+  });
+  if (!commitResponse.ok) {
+    const err = (await safeJson<GitHubErrorResponse>(
+      commitResponse,
+    )) as GitHubErrorResponse;
+    throw new Error(humanizeError(commitResponse.status, err));
+  }
+  const headCommit = (await safeJson<{ tree?: { sha?: string } }>(
+    commitResponse,
+  )) as {
+    tree?: { sha?: string };
+  };
+  const baseTreeSha = headCommit.tree?.sha;
+  if (!baseTreeSha)
+    throw new Error("GitHub did not return the branch tree SHA.");
+
+  const blobs = await Promise.all(
+    changes.map(async (change) => {
+      const response = await fetch(`${repoApi}/git/blobs`, {
+        method: "POST",
+        headers,
+        body: JSON.stringify({
+          content: JSON.stringify(change.content, null, 2) + "\n",
+          encoding: "utf-8",
+        }),
+      });
+      if (!response.ok) {
+        const err = (await safeJson<GitHubErrorResponse>(
+          response,
+        )) as GitHubErrorResponse;
+        throw new Error(humanizeError(response.status, err, change.path));
+      }
+      const blob = (await safeJson<{ sha?: string }>(response)) as {
+        sha?: string;
+      };
+      if (!blob.sha)
+        throw new Error(
+          `GitHub did not return a blob SHA for "${change.path}".`,
+        );
+      return { path: change.path, sha: blob.sha };
+    }),
+  );
+
+  const treeResponse = await fetch(`${repoApi}/git/trees`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({
+      base_tree: baseTreeSha,
+      tree: blobs.map((blob) => ({
+        path: blob.path,
+        mode: "100644",
+        type: "blob",
+        sha: blob.sha,
+      })),
+    }),
+  });
+  if (!treeResponse.ok) {
+    const err = (await safeJson<GitHubErrorResponse>(
+      treeResponse,
+    )) as GitHubErrorResponse;
+    throw new Error(humanizeError(treeResponse.status, err));
+  }
+  const tree = (await safeJson<{ sha?: string }>(treeResponse)) as {
+    sha?: string;
+  };
+  if (!tree.sha) throw new Error("GitHub did not return the new tree SHA.");
+
+  const newCommitResponse = await fetch(`${repoApi}/git/commits`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ message, tree: tree.sha, parents: [headSha] }),
+  });
+  if (!newCommitResponse.ok) {
+    const err = (await safeJson<GitHubErrorResponse>(
+      newCommitResponse,
+    )) as GitHubErrorResponse;
+    throw new Error(humanizeError(newCommitResponse.status, err));
+  }
+  const newCommit = (await safeJson<{ sha?: string; html_url?: string }>(
+    newCommitResponse,
+  )) as {
+    sha?: string;
+    html_url?: string;
+  };
+  if (!newCommit.sha)
+    throw new Error("GitHub did not return the new commit SHA.");
+
+  const updateRefResponse = await fetch(
+    `${repoApi}/git/refs/${branchRef.split("/").map(encodeURIComponent).join("/")}`,
+    {
+      method: "PATCH",
+      headers,
+      body: JSON.stringify({ sha: newCommit.sha, force: false }),
+    },
+  );
+  if (!updateRefResponse.ok) {
+    if (updateRefResponse.status === 409 || updateRefResponse.status === 422) {
+      throw new Error(
+        "Conflict saving content. The branch changed on GitHub — reload and try again.",
+      );
+    }
+    const err = (await safeJson<GitHubErrorResponse>(
+      updateRefResponse,
+    )) as GitHubErrorResponse;
+    throw new Error(humanizeError(updateRefResponse.status, err));
+  }
+
+  return {
+    commitSha: newCommit.sha,
+    commitUrl: newCommit.html_url,
+    files: blobs,
   };
 }
 
@@ -323,16 +550,20 @@ async function safeJson<T>(res: Response): Promise<T | unknown> {
 }
 
 /** Translate GitHub API status codes / messages into user-friendly text. */
-export function humanizeError(status: number, err?: GitHubErrorResponse, path?: string): string {
-  const where = path ? ` "${path}"` : '';
+export function humanizeError(
+  status: number,
+  err?: GitHubErrorResponse,
+  path?: string,
+): string {
+  const where = path ? ` "${path}"` : "";
   const base = err?.message?.trim();
 
   switch (status) {
     case 401:
-      return 'Invalid or expired token. Please re-enter your GitHub PAT.';
+      return "Invalid or expired token. Please re-enter your GitHub PAT.";
     case 403:
-      if (base?.toLowerCase().includes('rate limit')) {
-        return 'GitHub API rate limit reached. Wait a moment and try again.';
+      if (base?.toLowerCase().includes("rate limit")) {
+        return "GitHub API rate limit reached. Wait a moment and try again.";
       }
       return 'Token lacks permission for this repository. Ensure it has "Contents" read & write access.';
     case 404:

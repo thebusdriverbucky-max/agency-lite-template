@@ -1,0 +1,87 @@
+{
+  "schemaVersion": "1.0.0",
+  "template": {
+    "id": "agency-lite",
+    "name": "Agency Lite",
+    "release": {
+      "version": "0.1.0-candidate",
+      "tag": null,
+      "commit": null,
+      "status": "candidate"
+    },
+    "verifiedAt": "2026-09-26"
+  },
+  "runtime": {
+    "node": ">=22.0.0 <23",
+    "packageManager": "npm@10.8.2",
+    "database": null,
+    "capabilities": [
+      "json-content",
+      "github-backed-cms",
+      "atomic-content-commit",
+      "license-admin"
+    ]
+  },
+  "environment": [
+    {
+      "name": "LICENSE_KEY",
+      "required": true,
+      "feature": "core",
+      "secret": true,
+      "scope": "server",
+      "valueGroup": null,
+      "description": "Buyer license key supplied after purchase; this is the only required deployment variable.",
+      "providerDocsUrl": null,
+      "validation": { "type": "string", "minLength": 1 },
+      "defaultAvailable": false
+    },
+    {
+      "name": "ADMIN_JWT_SECRET",
+      "required": false,
+      "feature": "admin-secret-override",
+      "secret": true,
+      "scope": "server",
+      "valueGroup": null,
+      "description": "Advanced optional override for signing admin session JWTs; the bundled license verification secret remains the default.",
+      "providerDocsUrl": null,
+      "validation": { "type": "string", "minLength": 32 },
+      "defaultAvailable": true
+    }
+  ],
+  "aliases": [],
+  "featureRequirements": [],
+  "build": {
+    "command": "npm run build",
+    "steps": ["npm run content:validate", "next build"],
+    "contentValidation": {
+      "command": "npm run content:validate",
+      "schemaValidated": true,
+      "safeUrlSchemesValidated": true,
+      "duplicateWorkIdsRejected": true
+    },
+    "bootstrap": null,
+    "destructiveReset": null,
+    "requiresDatabase": false,
+    "requiresProviderSetup": false
+  },
+  "payments": null,
+  "security": {
+    "adminLogin": {
+      "method": "POST",
+      "path": "/api/admin/login",
+      "distributedRateLimit": "external-waf-required",
+      "operationalVerification": "pending"
+    },
+    "githubCmsCredentials": {
+      "storage": "sessionStorage",
+      "recommendedTokenType": "fine-grained-personal-access-token",
+      "expirationRequired": true
+    }
+  },
+  "content": {
+    "sourceOfTruth": ["content/config.json", "content/work.json"],
+    "database": false,
+    "atomicMultiFileCommit": true
+  },
+  "releaseNotes": "README.md"
+}

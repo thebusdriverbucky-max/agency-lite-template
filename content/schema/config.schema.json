@@ -1,0 +1,150 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ownyourwebsite.app/schemas/agency-lite/config.schema.json",
+  "title": "Agency Lite configuration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["theme", "site", "hero", "about", "services", "contact"],
+  "properties": {
+    "theme": {
+      "enum": ["dark-teal", "dark-amber", "light-slate", "light-rose"]
+    },
+    "site": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "description", "url", "logo", "ogImage", "keywords", "locale", "twitter", "colors"],
+      "properties": {
+        "name": { "$ref": "#/$defs/nonEmptyString" },
+        "description": { "$ref": "#/$defs/nonEmptyString" },
+        "url": { "$ref": "#/$defs/optionalUri" },
+        "logo": { "$ref": "#/$defs/optionalImageUrl" },
+        "ogImage": { "$ref": "#/$defs/optionalImageUrl" },
+        "keywords": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/nonEmptyString" },
+          "uniqueItems": true,
+          "maxItems": 50
+        },
+        "locale": { "type": "string", "pattern": "^[a-z]{2}(?:_[A-Z]{2})?$" },
+        "twitter": { "type": "string", "maxLength": 100 },
+        "whatsapp": { "type": "string", "maxLength": 100 },
+        "whatsappMessage": { "type": "string", "maxLength": 1000 },
+        "colors": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["primary", "secondary"],
+          "properties": {
+            "primary": { "$ref": "#/$defs/color" },
+            "secondary": { "$ref": "#/$defs/color" }
+          }
+        }
+      }
+    },
+    "hero": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "subtitle", "ctaText", "backgroundImage"],
+      "properties": {
+        "title": { "$ref": "#/$defs/nonEmptyString" },
+        "subtitle": { "$ref": "#/$defs/nonEmptyString" },
+        "ctaText": { "$ref": "#/$defs/nonEmptyString" },
+        "backgroundImage": { "$ref": "#/$defs/optionalImageUrl" },
+        "imageOpacity": { "$ref": "#/$defs/opacity" },
+        "opacity": { "$ref": "#/$defs/opacity" },
+        "link": { "$ref": "#/$defs/optionalLink" }
+      }
+    },
+    "about": { "$ref": "#/$defs/contentSection" },
+    "servicesConfig": { "$ref": "#/$defs/displayConfig" },
+    "portfolioConfig": { "$ref": "#/$defs/displayConfig" },
+    "services": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 24,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["title", "description", "icon"],
+        "properties": {
+          "title": { "$ref": "#/$defs/nonEmptyString" },
+          "description": { "$ref": "#/$defs/nonEmptyString" },
+          "icon": { "enum": ["Code", "Palette", "Lightbulb"] }
+        }
+      }
+    },
+    "contact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "subtitle", "email", "buttonText"],
+      "properties": {
+        "title": { "$ref": "#/$defs/nonEmptyString" },
+        "subtitle": { "$ref": "#/$defs/nonEmptyString" },
+        "email": { "type": "string", "format": "email", "maxLength": 254 },
+        "buttonText": { "$ref": "#/$defs/nonEmptyString" },
+        "opacity": { "$ref": "#/$defs/opacity" },
+        "link": { "$ref": "#/$defs/optionalLink" }
+      }
+    },
+    "privacyPolicy": { "$ref": "#/$defs/legalSection" },
+    "termsOfService": { "$ref": "#/$defs/legalSection" }
+  },
+  "$defs": {
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 10000
+    },
+    "optionalUri": {
+      "type": "string",
+      "maxLength": 2048,
+      "pattern": "^(?:$|https://[^\\s]+)$"
+    },
+    "optionalImageUrl": {
+      "type": "string",
+      "maxLength": 2048,
+      "pattern": "^(?:$|https://|/(?!/))"
+    },
+    "optionalLink": {
+      "type": "string",
+      "maxLength": 2048,
+      "pattern": "^(?:$|https://|mailto:|tel:|/(?!/)|#)"
+    },
+    "color": {
+      "type": "string",
+      "pattern": "^#[0-9a-fA-F]{6}$"
+    },
+    "opacity": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "displayConfig": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "opacity": { "$ref": "#/$defs/opacity" },
+        "link": { "$ref": "#/$defs/optionalLink" }
+      }
+    },
+    "contentSection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "text"],
+      "properties": {
+        "title": { "$ref": "#/$defs/nonEmptyString" },
+        "text": { "$ref": "#/$defs/nonEmptyString" },
+        "opacity": { "$ref": "#/$defs/opacity" },
+        "link": { "$ref": "#/$defs/optionalLink" }
+      }
+    },
+    "legalSection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "text"],
+      "properties": {
+        "title": { "$ref": "#/$defs/nonEmptyString" },
+        "text": { "$ref": "#/$defs/nonEmptyString" }
+      }
+    }
+  }
+}

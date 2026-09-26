@@ -68,7 +68,7 @@ async function licenseMiddleware(request: NextRequest): Promise<NextResponse | n
   return null;
 }
 
-export default async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   // 1. License check
   const licenseResponse = await licenseMiddleware(request);
   if (licenseResponse) {
