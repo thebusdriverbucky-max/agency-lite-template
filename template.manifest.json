@@ -4,10 +4,10 @@
     "id": "agency-lite",
     "name": "Agency Lite",
     "release": {
-      "version": "0.1.0-candidate",
-      "tag": null,
-      "commit": null,
-      "status": "candidate"
+      "version": "0.1.0",
+      "tag": "v0.1.0",
+      "commit": "b110d3efed532d0f1a30039fac58c3ab867b8dc9",
+      "status": "released"
     },
     "verifiedAt": "2026-09-26"
   },
