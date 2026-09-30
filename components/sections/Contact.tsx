@@ -49,7 +49,7 @@ export default function Contact() {
           )}
           <a
             href={`mailto:${contact.email}`}
-            className="inline-flex items-center justify-center px-8 py-4 bg-accent text-bg rounded-full font-medium hover:opacity-90 transition-opacity text-lg"
+            className="inline-flex items-center justify-center px-8 py-4 bg-brand-primary text-brand-secondary rounded-full font-medium hover:opacity-90 transition-opacity text-lg"
           >
             {contact.buttonText}
           </a>

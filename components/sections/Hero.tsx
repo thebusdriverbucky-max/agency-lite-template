@@ -80,7 +80,7 @@ export default function Hero() {
           </p>
           <Link
             href="#contact"
-            className="bg-accent text-bg px-8 py-4 rounded-full font-medium hover:opacity-90 transition-opacity opacity-0 animate-fade-in-up"
+            className="bg-brand-primary text-brand-secondary px-8 py-4 rounded-full font-medium hover:opacity-90 transition-opacity opacity-0 animate-fade-in-up"
             style={{ animationDelay: '500ms', animationFillMode: 'forwards' }}
           >
             {hero.ctaText}

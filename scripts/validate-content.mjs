@@ -3,6 +3,7 @@ import path from 'node:path';
 import process from 'node:process';
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
+import { checkGeneratedValidators } from './generate-content-validators.mjs';
 
 const root = process.cwd();
 
@@ -44,6 +45,12 @@ addFormats(ajv);
 
 const failures = [];
 const content = new Map();
+
+try {
+  await checkGeneratedValidators();
+} catch (error) {
+  failures.push(error instanceof Error ? error.message : String(error));
+}
 
 for (const target of targets) {
   try {

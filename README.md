@@ -49,6 +49,11 @@ invalid themes/icons, and duplicate portfolio IDs fail the deployment with an
 exact content path. Run `npm run content:validate` locally before pushing CMS or
 manual JSON changes.
 
+Browser CMS validation uses checked-in Ajv standalone validators, so schemas
+are not compiled with `eval` at runtime. After changing a schema, regenerate
+them with `npm run content:generate`; `npm run content:check` and the build
+validation fail if the generated file is stale.
+
 The included privacy and terms pages contain explicit starter placeholders, not
 business or legal advice. Replace and review them for your agency, enabled
 providers, operating countries, and actual practices before publishing the site.

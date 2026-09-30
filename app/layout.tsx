@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import type { CSSProperties } from "react";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import config from "@/content/config.json";
@@ -14,6 +15,10 @@ const keywords = config.site.keywords ?? [];
 const ogImage = config.site.ogImage?.trim();
 const twitter = config.site.twitter?.trim();
 const locale = config.site.locale?.trim() || "en_US";
+const brandStyle = {
+  "--brand-primary": config.site.colors.primary,
+  "--brand-secondary": config.site.colors.secondary,
+} as CSSProperties;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -64,7 +69,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="h-full antialiased" data-theme={config.theme}>
+    <html
+      lang="en"
+      className="h-full antialiased"
+      data-theme={config.theme}
+      style={brandStyle}
+    >
       <body className={`${inter.className} min-h-full flex flex-col bg-bg text-text`}>
         {children}
         <CookieBanner />

@@ -1,15 +1,13 @@
-import Ajv2020, { type ErrorObject, type ValidateFunction } from 'ajv/dist/2020';
-import addFormats from 'ajv-formats';
+import type { ErrorObject, ValidateFunction } from 'ajv';
 
-import configSchema from '@/content/schema/config.schema.json';
-import workSchema from '@/content/schema/work.schema.json';
-
-const ajv = new Ajv2020({ allErrors: true, strict: true });
-addFormats(ajv);
+import {
+  validateConfig,
+  validateWork,
+} from './content-validators.generated';
 
 const validators: Record<string, ValidateFunction> = {
-  'content/config.json': ajv.compile(configSchema),
-  'content/work.json': ajv.compile(workSchema),
+  'content/config.json': validateConfig as ValidateFunction,
+  'content/work.json': validateWork as ValidateFunction,
 };
 
 function formatErrors(path: string, errors: ErrorObject[] | null | undefined): string {
