@@ -161,6 +161,7 @@ export default function GitHubSetup({ initial, onSaved, onBack }: Props) {
                       onClick={() => setShowImageModal(true)}
                       className="group relative block w-full overflow-hidden rounded-lg border border-text/10 bg-black/40 text-left transition-all hover:border-text/25"
                     >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src="https://i.imgur.com/5GNUykI.jpeg"
                         alt="GitHub Fine-Grained Token configuration screenshot guide"
@@ -292,6 +293,7 @@ export default function GitHubSetup({ initial, onSaved, onBack }: Props) {
             </div>
             {/* Image container */}
             <div className="p-2 overflow-auto max-h-[80vh] flex justify-center">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="https://i.imgur.com/5GNUykI.jpeg"
                 alt="GitHub Fine-Grained Token configuration screenshot guide"
