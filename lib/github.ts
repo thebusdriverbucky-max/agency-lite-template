@@ -247,7 +247,13 @@ export async function fetchJsonFile<T>(
   const { owner, name } = parseRepo(settings.repo);
   const url = `${API_BASE}/repos/${owner}/${name}/contents/${path}?ref=${encodeURIComponent(settings.branch)}`;
 
-  const res = await fetch(url, { headers: authHeaders(settings.pat) });
+  // GitHub answers reads with Cache-Control: max-age=60. Without no-store the
+  // browser can hand back a stale file/SHA right after a save, which then
+  // shows old content or trips the conflict check on the next save.
+  const res = await fetch(url, {
+    headers: authHeaders(settings.pat),
+    cache: "no-store",
+  });
 
   if (!res.ok) {
     const err = (await safeJson<GitHubErrorResponse>(
@@ -379,7 +385,7 @@ export async function updateJsonFilesAtomically(
 
   const refResponse = await fetch(
     `${repoApi}/git/ref/${branchRef.split("/").map(encodeURIComponent).join("/")}`,
-    { headers: authHeaders(settings.pat) },
+    { headers: authHeaders(settings.pat), cache: "no-store" },
   );
   if (!refResponse.ok) {
     const err = (await safeJson<GitHubErrorResponse>(
@@ -396,7 +402,10 @@ export async function updateJsonFilesAtomically(
   const currentFiles = await Promise.all(
     changes.map(async (change) => {
       const url = `${repoApi}/contents/${change.path}?ref=${encodeURIComponent(headSha)}`;
-      const response = await fetch(url, { headers: authHeaders(settings.pat) });
+      const response = await fetch(url, {
+        headers: authHeaders(settings.pat),
+        cache: "no-store",
+      });
       if (!response.ok) {
         const err = (await safeJson<GitHubErrorResponse>(
           response,
@@ -423,6 +432,7 @@ export async function updateJsonFilesAtomically(
 
   const commitResponse = await fetch(`${repoApi}/git/commits/${headSha}`, {
     headers: authHeaders(settings.pat),
+    cache: "no-store",
   });
   if (!commitResponse.ok) {
     const err = (await safeJson<GitHubErrorResponse>(
