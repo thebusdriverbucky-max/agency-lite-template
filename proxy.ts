@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import {
   createGraceToken,
-  fetchLicenseValidation,
+  getLicenseValidation,
   LICENSE_COOKIE_NAME,
   verifyGraceToken,
   verifyLicenseToken,
@@ -32,8 +32,8 @@ async function licenseMiddleware(request: NextRequest): Promise<NextResponse | n
     if (await verifyGraceToken(cookieToken)) return null;
   }
 
-  // Cookie missing or expired — fetch from license server
-  const { valid, token, grace } = await fetchLicenseValidation();
+  // Cookie missing or expired — ask the license server (memoized per instance)
+  const { valid, token, grace } = await getLicenseValidation();
 
   if (!valid) {
     // License invalid or revoked — block access
